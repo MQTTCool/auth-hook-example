@@ -7,10 +7,7 @@ illustrating *authentication* and *authorization* mechanisms when an
 This project includes a simple web client front-end example for the [MQTT
 Extender - Authentication and Authorization Demo - Java Hook](https://github.com/Lightstreamer/MQTTExtender-example-Auth-Hook-java).
 
-
-[![screenshot](screenshot.png)](https://demos.lightstreamer.com/AuthDemo)
-
-###[![](http://demos.lightstreamer.com/site/img/play.png) View live demo](https://demos.lightstreamer.com/AuthDemo)
+![screenshot](screen_large.png)
 
 ## Details
 
@@ -206,8 +203,6 @@ To build your own version of `MQTT_Auth_demo.jar`, instead of using the one
 provided in the `deploy.zip` file from the Install section above, follow these
 steps:
 
-* Get the `ls-mqtt-hook-interface.jar` file from the latest MQTT Extender
-distribution, and copy it into the `lib` directory.
 * Assuming javac and jar are available on the path, from the command line run:
   ```sh
   javac -classpath ./lib/ls-mqtt-hook-interface.jar -d ./classes ./src/mqttextender.auth_demo/hooks/*.java
