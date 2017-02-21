@@ -4,8 +4,8 @@ The **MQTT Extender Authentication and Authorization Demo** is a simple example
 illustrating *authentication* and *authorization* mechanisms when an
 *external Web/Application Server* is involved in the process.
 
-This project includes a simple web client front-end example for the [MQTT
-Extender - Authentication and Authorization Demo - Java Hook](https://github.com/Lightstreamer/MQTTExtender-example-Auth-Hook-java).
+This project includes simple web client front-end example and hook
+implementation, which supplies user validation and authorization logics.
 
 ![screenshot](screen_large.png)
 
