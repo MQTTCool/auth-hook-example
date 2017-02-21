@@ -1,0 +1,1 @@
+//this file is empty, is used to simulate the request for authentication to a WebServer

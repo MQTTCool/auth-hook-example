@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<!--
+
+  Copyright (c) Lightstreamer Srl
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<html>
+
+<head>
+  <title>MQTT Extender Authentication and Authorization Demo</title>
+
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="css/jNotify.jquery.css" />
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/lib/jNotify.jquery.min.js"></script>
+  <script data-main="js/index.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.9/require.min.js"></script>
+</head>
+
+<body>
+  <a href="https://github.com/Lightstreamer/MQTTExtender-example-Auth-client-javascript">
+    <img style="position: absolute; top: 0; right: 0; border: 0; z-index:1" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+      alt="Fork me on GitHub"></a>
+
+  <div id="wrap">
+    <div>
+      <div>
+        <a id="logo" href="http://www.lightstreamer.com" target="_blank"><img src="images/logo.png" alt="LIGHTSTREAMER" hspace="0" border="0" /></a>
+      </div>
+      <div>
+        <h1>Authentication and Authorization Demo</h1>
+      </div>
+    </div>
+
+    <div id="lock">
+      <img src="images/lock.jpg" />
+    </div>
+
+    <!-- Authentication form -->
+    <div id="login_form">
+      <h2>Login</h2>
+      <form>
+        <input type="text" placeholder="user" id="user" disabled />
+        <input type="password" placeholder="password" id="password" disabled />
+        <input type="submit" value="Go" disabled />
+      </form>
+    </div>
+
+    <!-- Logout button, initially hidden, but shown once logged. -->
+    <h2 id="logout" class="button">Logout</h2>
+
+    <div id="clear">
+      <!-- Container for the application -->
+      <div id="application">
+
+        <div id="connect">
+          <h3 class="button">Click to connect to the target MQTT Broker</h3>
+            <h4>The Server will refuse the connection if the user is not authorized for target MQTT broker</h4>
+        </div>
+
+        <!-- Contanier for subscriptions -->
+        <div id="subscribe" style="display: none">
+          <h3>Click a topic to subscribe to</h3>
+            <h4>The Server will refuse the subscription if the user is not authorized for the selected topic</h4>
+          <div class="scroll">
+            <div id="subscriptionTopics"></div>
+          </div>
+        </div>
+
+        <!-- Contanier for publishing -->
+        <div id="publish">
+          <h3>Click a topic to publish a message TO</h3>
+            <h4>The Server will refuse the publishing if the user is not authorized for the selected topic</h4>
+          <div class="scroll">
+            <div id="publishingTopics"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2>Use one of the following user/password to login</h2>
+        <h3>Click an user to copy his credentials in the form</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Password</th>
+              <th>Connection Permissions</th>
+              <th>Subscription Permissions</th>
+              <th>Publishing Permissions</th>
+            </tr>
+          </thead>
+          <!-- The user list and related permissions -->
+          <tbody id="userlist"> </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
