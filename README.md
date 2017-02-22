@@ -95,7 +95,7 @@ from `src/java/mqttextender/auth_demo/hooks/AuthHook.java`:
 
 AuthorizationResult result =
     AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
-if (result != AuthorizationResult.OK) {
+if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException("Unauthorized access: user '" + user +
         "' can't connect to broker '" + brokerAddress + "'",
         result.getCode());
@@ -103,7 +103,7 @@ if (result != AuthorizationResult.OK) {
 
 AuthorizationResult result =
     AuthorizationRequest.authorizeSubscribeTo(user, subscription.getTopicFilter());
-if (result != AuthorizationResult.OK) {
+if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException(
         String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
             user, subscription.getTopicFilter()),
@@ -114,7 +114,7 @@ if (result != AuthorizationResult.OK) {
 
 AuthorizationResult result =
     AuthorizationRequest.authorizePublishTo(user, message.getTopicName());
-if (result != AuthorizationResult.OK) {
+if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException(
         String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
             user, message.getTopicName()),
