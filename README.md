@@ -77,7 +77,7 @@ user can request to subscribe to a topic; from the second panel, the user can
 request to publish a random message to a topic. In case a subcription is
 accepted and then submitted to the MQTT broker, incoming messages are displayed
 on the selected row; in case a publishing is accepted and then delivered to the
-MQTT broker, yhe user is invited to send a new one.
+MQTT broker, the user is invited to send a new one.
 
 Every time a connection, a subscription or a publishing is requested, the MQTT
 Extender proceeds with the authorization check, by delegating to the Hook the
