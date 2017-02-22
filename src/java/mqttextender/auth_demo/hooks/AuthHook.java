@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) Lightstreamer Srl
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package mqttextender.auth_demo.hooks;
 
 import com.lightstreamer.mqtt_extender.hooks.HookException;
@@ -11,6 +23,9 @@ import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Hook class for authorization checks.
+ */
 public class AuthHook implements IMqttExtenderHook {
 
     /** Map for sessionId-user pairs. */
@@ -38,7 +53,7 @@ public class AuthHook implements IMqttExtenderHook {
          * Thus, we have to ask the same server (or a common backend like a memcached or a DB) if
          * the received token is (still) valid.
          * This demo does not actually perform the request, user/token pairs are hardcoded in the
-         * AuthorizationRequest class
+         * AuthorizationRequest class.
          */
         AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
         if (!AuthorizationResult.OK.equals(result)) {
@@ -47,19 +62,18 @@ public class AuthHook implements IMqttExtenderHook {
         }
 
         /*
-         * Since subsequent hook calls will rely only on the sessionId, we store the user associated
+         * Since subsequent Hook calls will rely only on the sessionId, we store the user associated
          * with this sessionId on an internal map.
          */
         sessionIdToUserMap.put(sessionId, user);
         return true;
 
         /*
-         * NOTE: as documented in the Lightstreamer MQTT Extender Documentation PDF, the
-         * canOpenSession call is made during the notifyNewSession call of the MQTT Extender
-         * Metadata Adapter. For this reason, if we have to block in order to perform the lookup for
-         * the client, a specific "SET" thread pool may be configured in the
-         * mqtt_master_connector_conf.xml configuration file for the MQTT Extender. We could also
-         * speed up things using a local cache.
+         * NOTE: as documented in the MQTT Extender Documentation, the can OpenSession call is made
+         * during the notifyNewSession call of the MQTT Extender Metadata Adapter. For this reason,
+         * if we have to block in order to perform the lookup for the client, a specific "SET"
+         * thread pool may be configured in the mqtt_master_connector_conf.xml configuration file
+         * for the MQTT Extender. We could also speed up things using a local cache.
          */
 
         /*
@@ -73,127 +87,26 @@ public class AuthHook implements IMqttExtenderHook {
          */
     }
 
-    // @Override
-    // public void onConnectionClose(String connectionId) {
-    //
-    // /*
-    // * A user is disconnecting. We clear the internal map from the
-    // * association between this connection ID and its user.
-    // */
-    // connectionIdToUser.remove(connectionId);
-    // }
-
-    // @Override
-    // public boolean onMessageConsumerRequest(String connectionId, String dataAdapterName,
-    // String sessionGuid, String destinationName,
-    // boolean destinationIsTopic) throws HookException {
-    //
-    // /*
-    // * A user is trying to create a message consumer on a destination, we have to verify if
-    // * he is authorized to see what he's asking for. To do this we first recover the user
-    // * associated
-    // * with the connection ID from our internal map.
-    // * This task might be performed by checking an external service or a local cache. If a
-    // * service
-    // * has to be queried, it is, in most cases, better to query it beforehand in the
-    // * onConnectionRequest
-    // * method. This class assumes such info has been cached somewhere else. On the other hand,
-    // * the
-    // * AuthHookWithAuthCache class (available in this package) takes a step further and shows
-    // * the cache-during-onConnectionRequest approach.
-    // * In any case this demo does not actually perform the request, as user authorizations
-    // * are hardcoded in the AuthorizationRequest class.
-    // */
-    // String user = connectionIdToUser.get(connectionId);
-    // if (user == null)
-    // return false; // Should never happen
-    //
-    // AuthorizationResult result =
-    // AuthorizationRequest.authorizeDestination(user, destinationName);
-    // if (result != AuthorizationResult.OK)
-    // throw new HookException(
-    // "Unauthorized access: user '" + user +
-    // "' can't receive messages from destination '" + destinationName + "'",
-    // result.toString());
-    //
-    // return true;
-    // }
-
-    // @Override
-    // public boolean onDurableSubscriptionRequest(String connectionId, String dataAdapterName,
-    // String clientId, String sessionGuid, String subscriptionName,
-    // String topicName) throws HookException {
-    //
-    // /*
-    // * A user is trying to create a durable subscription on a destination, we have to verify if
-    // * he is authorized to see what he's asking for. To do this we first recover the user
-    // * associated
-    // * with the connection ID from our internal map.
-    // * This task might be performed by checking an external service or a local cache. If a
-    // * service
-    // * has to be queried, it is, in most cases, better to query it beforehand in the
-    // * onConnectionRequest
-    // * method. This class assumes such info has been cached somewhere else. On the other hand,
-    // * the
-    // * AuthHookWithAuthCache class (available in this package) takes a step further and shows
-    // * the cache-during-onConnectionRequest approach.
-    // * In any case this demo does not actually perform the request, as user authorizations
-    // * are hardcoded in the AuthorizationRequest class.
-    // */
-    // String user = connectionIdToUser.get(connectionId);
-    // if (user == null)
-    // return false; // Should never happen
-    //
-    // AuthorizationResult result = AuthorizationRequest.authorizeDestination(user, topicName);
-    // if (result != AuthorizationResult.OK)
-    // throw new HookException("Unauthorized access: user '" + user +
-    // "' can't subscribe to topic '" + topicName + "'", result.toString());
-    //
-    // return true;
-    // }
-
-    // @Override
-    // public boolean onMessageProducerRequest(String connectionId, String dataAdapterName,
-    // String sessionGuid, String destinationName,
-    // boolean destinationIsTopic) throws HookException {
-    //
-    // /*
-    // * A user is trying to create a message producer on a destination, we have to verify if
-    // * he is authorized to see what he's asking for. To do this we first recover the user
-    // * associated with the connection ID from our internal map.
-    // * This task might be performed by checking an external service or a local cache. If a
-    // * service has to be queried, it is, in most cases, better to query it beforehand in the
-    // * onConnectionRequest method. This class assumes such info has been cached somewhere else.
-    // * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-    // * step further and shows the cache-during-onConnectionRequest approach.
-    // * In any case this demo does not actually perform the request, as user authorizations
-    // * are hardcoded in the AuthorizationRequest class.
-    // */
-    // String user = connectionIdToUser.get(connectionId);
-    // if (user == null)
-    // return false; // Should never happen
-    //
-    // AuthorizationResult result =
-    // AuthorizationRequest.authorizeDestination(user, destinationName);
-    // if (result != AuthorizationResult.OK)
-    // throw new HookException("Unauthorized access: user '" + user +
-    // "' can't send messages to destination '" + destinationName + "'",
-    // result.toString());
-    //
-    // return true;
-    // }
+    @Override
+    public void onSessionClose(String sessionId) {
+        /*
+         * A user is disconnecting. We clear the internal map from the
+         * association between this connection ID and its user.
+         */
+        sessionIdToUserMap.remove(sessionId);
+    }
 
     @Override
     public boolean canConnect(String sessionId, String clientId, String brokerAddress,
         IMqttConnectOptions connectOptions) throws HookException {
 
         /*
-         * A client is trying to publish a message to a topic, we have to verify if it is authorized
-         * to see what it is asking for. To do this we first recover the user
+         * An user is trying to connect to the specified MQTT broker, we have to verify if he is
+         * authorized to perform what it is asking for. To do this we first recover the user
          * associated with the connection ID from our internal map.
          * This task might be performed by checking an external service or a local cache. If a
          * service has to be queried, it is, in most cases, better to query it beforehand in the
-         * onConnectionRequest method. This class assumes such info has been cached somewhere else.
+         * canOpenSession method. This class assumes such info has been cached somewhere else.
          * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
          * step further and shows the cache-during-onConnectionRequest approach.
          * In any case this demo does not actually perform the request, as user authorizations
@@ -220,14 +133,14 @@ public class AuthHook implements IMqttExtenderHook {
         IMqttMessage message) throws HookException {
 
         /*
-         * A client is trying to publish a message to a topic, we have to verify if it is authorized
-         * to see what it is asking for. To do this we first recover the user
-         * associated with the connection ID from our internal map.
+         * A user is trying to publish a message to a topic, we have to verify if he is authorized
+         * to perform what it is asking for. To do this we first recover the user associated with
+         * the session Id from our internal map.
          * This task might be performed by checking an external service or a local cache. If a
          * service has to be queried, it is, in most cases, better to query it beforehand in the
-         * onConnectionRequest method. This class assumes such info has been cached somewhere else.
+         * canOpenSession method. This class assumes such info has been cached somewhere else.
          * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-         * step further and shows the cache-during-onConnectionRequest approach.
+         * step further and shows the cache-during-canOpenSession approach.
          * In any case this demo does not actually perform the request, as user authorizations
          * are hardcoded in the AuthorizationRequest class.
          */
@@ -253,14 +166,14 @@ public class AuthHook implements IMqttExtenderHook {
         IMqttSubscription subscription) throws HookException {
 
         /*
-         * A user is trying to create a message consumer on a destination, we have to verify if
-         * he is authorized to see what he's asking for. To do this we first recover the user
-         * associated with the session id from our internal map.
+         * A user is trying to subscribe to a topic, we have to verify if he is authorized to
+         * perform what he's asking for. To do this we first recover the user associated with the
+         * session id from our internal map.
          * This task might be performed by checking an external service or a local cache. If a
          * service has to be queried, it is, in most cases, better to query it beforehand in the
-         * onConnectionRequest method. This class assumes such info has been cached somewhere else.
+         * canOpenSession method. This class assumes such info has been cached somewhere else.
          * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-         * step further and shows the cache-during-onConnectionRequest approach.
+         * step further and shows the cache-during-canOpenSession approach.
          * In any case this demo does not actually perform the request, as user authorizations
          * are hardcoded in the AuthorizationRequest class.
          */
@@ -287,12 +200,7 @@ public class AuthHook implements IMqttExtenderHook {
     }
 
     @Override
-    public void onSessionClose(String sessionId) {
-    }
-
-    @Override
     public void onUnsubscribe(String sessionId, String clientId, String serverAddress,
         String topicFilter) {
-
     }
 }
