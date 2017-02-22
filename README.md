@@ -83,10 +83,11 @@ Every time a connection, a subscription or a publishing is requested, the MQTT
 Extender proceeds with the authorization check, by delegating to the Hook the
 responsibility to verify if the user issuing the request is actually
 authorized to access the resource is asking for. A real case might query an
-external service to verify the user authorizations; this example simply cheks
-on hard-coded set of permissions which specify, for each username, whether the
-target MQTT broker is allowed to be connected and the list of  subscribable and
-publishable topics.
+external service to verify the user authorizations; this example simply cheks,
+for each username, on hard-coded set of permissions the following:
+- a list of contactable MQTT brokers
+- a list of subscribable topics
+- a list of topics to which messages are allowed to be delivered.
 
 from `src/java/mqttextender/auth_demo/hooks/AuthHook.java`:
 ```java
