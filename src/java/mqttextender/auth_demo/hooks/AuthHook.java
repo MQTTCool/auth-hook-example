@@ -108,7 +108,7 @@ public class AuthHook implements IMqttExtenderHook {
          * service has to be queried, it is, in most cases, better to query it beforehand in the
          * canOpenSession method. This class assumes such info has been cached somewhere else.
          * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-         * step further and shows the cache-during-onConnectionRequest approach.
+         * step further and shows the cache-during-canOpenSession approach.
          * In any case this demo does not actually perform the request, as user authorizations
          * are hardcoded in the AuthorizationRequest class.
          */
