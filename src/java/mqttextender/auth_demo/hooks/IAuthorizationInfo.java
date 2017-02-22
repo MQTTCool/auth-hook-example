@@ -22,30 +22,30 @@ public interface IAuthorizationInfo {
      * Asks if connection to the specified MQTT broker address is allowed.
      * 
      * @param broker
-     *            The MQTT broker address to connect to.
+     *            the MQTT broker address to connect to
      * @return {@code true} if connection to the specified MQTT broker address is allowed,
-     *         {@code false} otherwise.
+     *         {@code false} otherwise
      */
     boolean allowConnectionTo(String broker);
-
-    /**
-     * Asks if publishing to the specified topic is allowed.
-     * 
-     * @param topic
-     *            The topic to which publishing a MQTT message.
-     * @return {@code true} if publishing to the specified topic is allowed, {@code false}
-     *         otherwise.
-     */
-    boolean allowPublishTo(String topic);
 
     /**
      * Asks if subscription to the specified topic is allowed.
      * 
      * @param topic
-     *            The topic to subscribe to.
+     *            the topic to subscribe to
      * @return {@code true} if subscription to the specified topic is allowed, {@code false}
-     *         otherwise.
+     *         otherwise
      */
     boolean allowSubscribeTo(String topic);
+
+    /**
+     * Asks if publishing to the specified topic is allowed.
+     * 
+     * @param topic
+     *            the topic to which publishing a MQTT message.
+     * @return {@code true} if publishing to the specified topic is allowed, {@code false}
+     *         otherwise
+     */
+    boolean allowPublishTo(String topic);
 
 }
