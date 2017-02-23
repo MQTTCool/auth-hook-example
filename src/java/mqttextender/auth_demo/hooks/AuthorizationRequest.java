@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Handles authorization requests issued by the user.  
+ * Handles authorization requests issued by the user.
  */
 class AuthorizationRequest {
 
@@ -162,7 +162,7 @@ class AuthorizationRequest {
 
         String topicPrefix = "topics/topic_";
         for (int i = 0; i < 30; i++) {
-            String topic = topicPrefix + "_" + i;
+            String topic = topicPrefix + i;
             AuthorizationResult subscriptionResult = permissionInfos.allowSubscribeTo(topic)
                 ? AuthorizationResult.OK
                 : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED;

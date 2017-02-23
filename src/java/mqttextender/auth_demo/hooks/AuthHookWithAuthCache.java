@@ -268,7 +268,11 @@ public class AuthHookWithAuthCache implements IMqttExtenderHook {
             AuthorizationResult result = map.get(brokerAddress);
             if (!AuthorizationResult.OK.equals(result)) {
                 throw new HookException("Unauthorized access: user '" + user +
-                    "' can't connect to broker '" + brokerAddress + "'", result.getCode());
+                    "' can't connect to broker '" + brokerAddress + "'",
+                    result != null
+                        ? result.getCode()
+                        : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED.getCode());
+
             }
 
             return true;
@@ -317,7 +321,9 @@ public class AuthHookWithAuthCache implements IMqttExtenderHook {
                 throw new HookException(
                     String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
                         user, message.getTopicName()),
-                    result.getCode());
+                    result != null
+                        ? result.getCode()
+                        : AuthorizationResult.PUBLISHING_NOT_ALLOWED.getCode());
             }
 
             return true;
@@ -367,7 +373,9 @@ public class AuthHookWithAuthCache implements IMqttExtenderHook {
                 throw new HookException(
                     String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
                         user, subscription.getTopicFilter()),
-                    result.getCode());
+                    result != null
+                        ? result.getCode()
+                        : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED.getCode());
             }
 
             return true;

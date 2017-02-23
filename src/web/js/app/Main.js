@@ -18,7 +18,7 @@
 // to a WebServer that will answer with a session token (or refusing the
 // request). As the WebServer is not actually deployed, authentication on the
 // client will only be simulated (see the js/Authentication.js).
-require(['MQTTExtender', 'app/Authentication', 'app/SessionHandler',
+require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
   'app/Constants'],
   function(MQTTExtender, Authentication, ConnectionHandler, Constants) {
 
@@ -43,7 +43,7 @@ require(['MQTTExtender', 'app/Authentication', 'app/SessionHandler',
       // authentication on the client.
       $.ajax({
         url: 'js/app/login.js',
-        type: 'POST',
+        type: 'GET',
         data: {
           user: user,
           password: password
