@@ -97,8 +97,7 @@ AuthorizationResult result =
     AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
 if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException("Unauthorized access: user '" + user +
-        "' can't connect to broker '" + brokerAddress + "'",
-        result.getCode());
+        "' can't connect to broker '" + brokerAddress + "'", result.getCode());
 }
 
 AuthorizationResult result =
@@ -108,7 +107,7 @@ if (!AuthorizationResult.OK.equals(result)) {
         String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
             user, subscription.getTopicFilter()),
         result.getCode());
-}
+        }
 
 [...]
 
