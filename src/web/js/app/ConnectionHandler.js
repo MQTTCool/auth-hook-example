@@ -19,6 +19,7 @@ define(['Message', 'app/Constants'],
     // The MQTT client instance used to interact with the target MQTT broker.
     var mqttClient;
 
+    // Message shown in the topic rows.
     var CLICK_TO_PUBLISH = 'click to publish';
     var CLICK_TO_SUBSCRIBE = 'click to susbcribe';
 
@@ -65,9 +66,9 @@ define(['Message', 'app/Constants'],
     }
 
     /**
-     * Callback invoked upon message not authorized to be published.
+     * Callback invoked upon message not authorized for publishing.
      *
-     * @param {!Message} message - The message not authorized to be published.
+     * @param {!Message} message - The message not authorized for publising.
      * @param {Object=} responseObject - The object with details about
      *   autorization failure.
      */
@@ -80,16 +81,16 @@ define(['Message', 'app/Constants'],
         var whichTopic = topic.substring(topic.length - 1);
         var id = '#publish' + whichTopic;
         $(id)
-          .css('background-color', 'red') // Background to red
+          .css('background-color', 'red')    // Background to red
           .text(responseObject.errorMessage) // Show the error message
-          .off('click'); // Remove the event handler
+          .off('click');                     // Remove the event handler
       }
     }
 
     /**
-     * Callback invokes upon subscription not authorized.
+     * Callback invoked upon subscription not authorized.
      *
-     * @param {string} id
+     * @param {string} id - The row id of not authorized topic.
      * @param {Object=} responseObject - The object with details about
      *   autorization failure.
      */
@@ -105,21 +106,25 @@ define(['Message', 'app/Constants'],
       }
     }
 
+    /**
+     * Callback invoked upon connection lost.
+     *
+     * @param {any} responseObj - The object with details about connection lost.
+     */
     function onConnectionLost(responseObj) {
-      // Do not show message error in case of explicit session
-      // close (12) or client disconnection (0);
+      // Do not show message error in case of explicit session close (12) or
+      // client disconnection (0);
       switch (responseObj.errorCode) {
         case 0:
+        case 12:
           break;
 
         case 10:
         case 11:
-          jError(
-            responseObj.errorMessage,
+          jError(responseObj.errorMessage,
             Constants.J_NOTIFY_OPTIONS_CONNECTION_ERR);
           resetGrids();
           break;
-        case 12:
 
       }
     }
@@ -135,7 +140,7 @@ define(['Message', 'app/Constants'],
         mqttClient.connect({
           onSuccess: function() {
             $('#connect')
-              .off('click') // Avoid to dispatch more than one event next time.
+              .off('click') // Avoid to dispatch more than one event next time
               .hide();
             $('#publish').slideDown();
             $('#subscribe').slideDown();
@@ -181,7 +186,7 @@ define(['Message', 'app/Constants'],
 
     /**
      * Creates a callback to be provided to jQuery as event handler when the
-     * user clicks on a row to subscribe to a topoc filter.
+     * user clicks on a row to subscribe to a topic filter.
      *
      * @param {string} id - The row id
      * @param {string} topicFilter - The topic filter to subscribe to.
@@ -215,12 +220,12 @@ define(['Message', 'app/Constants'],
      */
     function resetGrids() {
       $('#connect')
-        .click(connect())
-        .show();
+        .click(connect()) // Add client evenet handler
+        .show();          // Show the link
 
+      // Hide and clear subpanels.
       $('#publish').hide();
       $('#subscribe').hide();
-
       $('#publishingTopics').empty();
       $('#subscriptionTopics').empty();
 
@@ -270,5 +275,4 @@ define(['Message', 'app/Constants'],
         resetGrids();
       }
     };
-
   });
