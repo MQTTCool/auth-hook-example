@@ -107,7 +107,7 @@ if (!AuthorizationResult.OK.equals(result)) {
         String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
             user, subscription.getTopicFilter()),
         result.getCode());
-        }
+}
 
 [...]
 
