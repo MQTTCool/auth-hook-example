@@ -43,7 +43,7 @@ require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
       // authentication on the client.
       $.ajax({
         url: 'js/app/login.js',
-        type: 'GET',
+        type: 'POST',
         data: {
           user: user,
           password: password
