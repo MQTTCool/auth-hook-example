@@ -46,7 +46,7 @@ class AuthorizationRequest {
     // Initialize authorizations for each user.
     static {
         // Authorizations for user "user1":
-        IPermissionInfo user1Auth = new DefaultAuthorizationInfo.AuthorizationBuilder()
+        IPermissionInfo user1Auth = new DefaultPermissionInfo.AuthorizationBuilder()
             .withBroker(ALLOWED_BROKER)
             .withSubscribeTo("topics/topic_1")
             .withSubscribeTo("topics/topic_2")
@@ -61,23 +61,23 @@ class AuthorizationRequest {
          * Authorizations for user "user2", which will be able to open a session but not to
          * connect to the MQTT broker.
          */
-        IPermissionInfo user2Auth = new DefaultAuthorizationInfo.AuthorizationBuilder().build();
+        IPermissionInfo user2Auth = new DefaultPermissionInfo.AuthorizationBuilder().build();
         AUTHORIZATIONS.put("user2", user2Auth);
 
         // Authorizations for user "patient0", which will never be able to open a new session.
 
         // Authorizations for user "leto", which will be able to authorized to do everything.
-        IPermissionInfo letoAuth = DefaultAuthorizationInfo.AuthorizationBuilder.ALL;
+        IPermissionInfo letoAuth = DefaultPermissionInfo.AuthorizationBuilder.ALL;
         AUTHORIZATIONS.put("leto", letoAuth);
 
         // Authorizations for user "gollum", which will only be able to connect to the MQTT broker.
-        IPermissionInfo gollumAuth = new DefaultAuthorizationInfo.AuthorizationBuilder()
+        IPermissionInfo gollumAuth = new DefaultPermissionInfo.AuthorizationBuilder()
             .withBroker(ALLOWED_BROKER)
             .build();
         AUTHORIZATIONS.put("gollum", gollumAuth);
 
         // Authorizations for user "lucky":
-        IPermissionInfo lucyAuth = new DefaultAuthorizationInfo.AuthorizationBuilder()
+        IPermissionInfo lucyAuth = new DefaultPermissionInfo.AuthorizationBuilder()
             .withBroker(ALLOWED_BROKER)
             .withPublishingTo("topics/topic_13")
             .withPublishingTo("topics/topic_17")
