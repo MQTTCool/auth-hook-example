@@ -1,4 +1,7 @@
 /*
+  MQTT.Cool - http://MQTT.Cool
+  Authentication and Authorization Demo
+
   Copyright (c) Lightstreamer Srl
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +19,9 @@
 
 // Configure RequireJS
 requirejs.config({
-  deps: ['js/lib/lightstreamer-mqtt.js'],
+  deps: ['js/lib/mqtt.cool.js'],
   callback: function() {
-    // Load the entry point for the Authorization application, after dependences
+    // Load the entry point for the Authorization application, after dependencies
     // have been loaded.
     require(['app/Main']);
   }
