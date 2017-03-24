@@ -1,4 +1,6 @@
 /*
+ * MQTT.Cool - http://MQTT.Cool
+ * Authentication and Authorization Demo
  * Copyright (c) Lightstreamer Srl
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package mqttextender.auth_demo.hooks;
+package cool.mqtt.auth_demo.hooks;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,8 +34,8 @@ class DefaultPermissionInfo implements IPermissionInfo {
     private final Set<String> allowedTopicForPublishing;
 
     private DefaultPermissionInfo(Set<String> allowedBrokers,
-                                     Set<String> allowedTopicForSubscribing,
-                                     Set<String> allowedTopicForPublishing) {
+                                  Set<String> allowedTopicForSubscribing,
+                                  Set<String> allowedTopicForPublishing) {
 
         this.allowedBrokers = Collections.unmodifiableSet(allowedBrokers);
         this.allowedTopicForSubscribing = Collections.unmodifiableSet(allowedTopicForSubscribing);

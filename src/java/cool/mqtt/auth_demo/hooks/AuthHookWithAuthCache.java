@@ -1,23 +1,22 @@
 /*
+ * MQTT.Cool - http://MQTT.Cool
+ * Authentication and Authorization Demo
+ * 
  * Copyright (c) Lightstreamer Srl
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package mqttextender.auth_demo.hooks;
-
-import com.lightstreamer.mqtt_extender.hooks.HookException;
-import com.lightstreamer.mqtt_extender.hooks.IMqttBrokerConfig;
-import com.lightstreamer.mqtt_extender.hooks.IMqttConnectOptions;
-import com.lightstreamer.mqtt_extender.hooks.IMqttExtenderHook;
-import com.lightstreamer.mqtt_extender.hooks.IMqttMessage;
-import com.lightstreamer.mqtt_extender.hooks.IMqttSubscription;
+package cool.mqtt.auth_demo.hooks;
 
 import java.io.File;
 import java.util.Map;
@@ -27,10 +26,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import cool.mqtt.hooks.HookException;
+import cool.mqtt.hooks.IMqttBrokerConfig;
+import cool.mqtt.hooks.IMqttConnectOptions;
+import cool.mqtt.hooks.IMqttCoolHook;
+import cool.mqtt.hooks.IMqttMessage;
+import cool.mqtt.hooks.IMqttSubscription;
+
 /**
  * Alternative Hook class for authorization checks, implementing a local cache.
  */
-public class AuthHookWithAuthCache implements IMqttExtenderHook {
+public class AuthHookWithAuthCache implements IMqttCoolHook {
 
     /** Map for sessionId-user pairs */
     private final ConcurrentHashMap<String, String> sessionIdToUsers = new ConcurrentHashMap<>();
@@ -137,21 +143,20 @@ public class AuthHookWithAuthCache implements IMqttExtenderHook {
         sessionIdToUsers.put(sessionId, user);
 
         /*
-         * NOTE: as documented in the MQTT Extender Documentation, the canOpenSession call is made
-         * during the notifyNewSession call of the MQTT Extender Metadata Adapter. For this reason,
+         * NOTE: as documented in the MQTT.Cool Documentation, the canOpenSession call is made
+         * during the notifyNewSession call of the MQTT.Cool Metadata Adapter. For this reason,
          * if we have to block in order to perform the lookup for the client, a specific "SET"
          * thread pool may be configured in the mqtt_master_connector_conf.xml configuration file
-         * for the MQTT Extender. We could also speed up things using a local cache.
+         * for MQTT.Cool. We could also speed up things using a local cache.
          */
 
         /*
          * NOTE 2: it is common practice for a webserver to place its session token inside a cookie;
-         * if the cookie, the SDK for Web Client, and the MQTT Extender are properly configured,
-         * such cookie is available in the HTTP headers map, which can be obtained from the
-         * clientContext map with the "HTTP_HEADERS" key; you might be tempted to use it to
-         * authenticate the user: this approach is discouraged, please check the MQTT Extender
-         * configuration file for the <use_protected_js> and <forward_cookies> documentation for
-         * further info about the topic.
+         * if the cookie, the SDK for Web Client, and MQTT.Cool are properly configured, such cookie
+         * is available in the HTTP headers map, which can be obtained from the clientContext map
+         * with the "HTTP_HEADERS" key; you might be tempted to use it to authenticate the user:
+         * this approach is discouraged, please check the MQTT.Cool configuration file for the
+         * <use_protected_js> and <forward_cookies> documentation for further info about the topic.
          */
 
         /*
@@ -177,7 +182,7 @@ public class AuthHookWithAuthCache implements IMqttExtenderHook {
              * If this is the first connection we have to query the service to retrieve the list of
              * authorizations.
              * We don't need it right away, thus it would be a pity to block the thread. So we will
-             * make the request to the service on a separatd thread.
+             * make the request to the service on a separate thread.
              */
             final String retrievedUser = user;
             final UserAuthorizations retrievedUserCache = userCache;
@@ -390,7 +395,6 @@ public class AuthHookWithAuthCache implements IMqttExtenderHook {
     @Override
     public void onUnsubscribe(String sessionId, String clientId, String brokerAddress,
         String topicFilter) {
-
         // Nothing to do.
     }
 }

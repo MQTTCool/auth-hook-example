@@ -1,4 +1,6 @@
 /*
+ * MQTT.Cool - http://MQTT.Cool
+ * Authentication and Authorization Demo
  * Copyright (c) Lightstreamer Srl
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package mqttextender.auth_demo.hooks;
+package cool.mqtt.auth_demo.hooks;
 
 /**
  * Simple interface which exposes queries to check authorized permissions.
@@ -22,8 +24,9 @@ public interface IPermissionInfo {
      * 
      * @param broker
      *            the MQTT broker address to connect to
-      * @return {@code true} if permission is authorized, {@code false} otherwise
-F    */
+     * @return {@code true} if permission is authorized, {@code false} otherwise
+     *         F
+     */
     boolean allowConnectionTo(String broker);
 
     /**
