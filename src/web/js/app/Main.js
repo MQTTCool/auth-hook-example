@@ -1,4 +1,7 @@
 /*
+  MQTT.Cool - http://MQTT.Cool
+  Authentication and Authorization Demo
+
   Copyright (c) Lightstreamer Srl
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +21,12 @@
 // to a WebServer that will answer with a session token (or refusing the
 // request). As the WebServer is not actually deployed, authentication on the
 // client will only be simulated (see the js/Authentication.js).
-require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
+require(['MQTTCool', 'app/Authentication', 'app/ConnectionHandler',
   'app/Constants'],
-  function(MQTTExtender, Authentication, ConnectionHandler, Constants) {
+  function(MQTTCool, Authentication, ConnectionHandler, Constants) {
 
-    // The reference to the session opened against the NQTT Extender.
-    var extenderSession = null;
+    // The reference to the session opened against the MQTT.Cool Server.
+    var coolSession = null;
     $('#login_form :submit').click(function(event) {
       // The user wants to authenticate.
 
@@ -39,7 +42,7 @@ require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
       var password = $('#password').val().replace(Constants.TRIM_REGEXP, '$1');
 
       // Let's call the webserver to ask for an authentication token.
-      // This demo we call a longin.js script which is an empty file to fake the
+      // This demo we call a login.js script which is an empty file to fake the
       // authentication on the client.
       $.ajax({
         url: 'js/app/login.js',
@@ -67,39 +70,31 @@ require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
             jError('Authentication Failed: wrong user/password',
               Constants.J_NOTIFY_OPTIONS_ERR);
           } else {
-            // Now it is possible to connect to MQTT Extender, by sending the
+            // Now it is possible to connect to MQTT.Cool, by sending the
             // token, not the password.
-            MQTTExtender.connect(Constants.SERVER, user, token, {
-              // Intercept potential errors on the MQTT Extender, e.g.: the
+            MQTTCool.connect(Constants.SERVER, user, token, {
+              // Intercept potential errors on the MQTT.Cool Server, e.g.: the
               // token expired while connecting.
               onConnectionFailure: function(errorType, responseObj) {
                 var customMsg = responseObj ? JSON.stringify(responseObj) : '';
-                jError('Connection to MQTT Extender refused: ' + errorType +
+                jError('Connection to MQTT.Cool refused: ' + errorType +
                   ' ' + customMsg, Constants.J_NOTIFY_OPTIONS_ERR);
               },
 
-              onConnectionSuccess: function(mqttExtenderSession) {
+              onConnectionSuccess: function(mqttCoolSession) {
                 // Update the reference to the session, in order to be closed
                 // later once requested.
-                extenderSession = mqttExtenderSession;
+                coolSession = mqttCoolSession;
 
                 // Show application container.
                 showApplication();
 
                 // Create a new client instance.
-                var mqttClient = mqttExtenderSession.createClient('mosquitto');
+                var mqttClient = mqttCoolSession.createClient('mosquitto');
 
                 // Start managing MQTT connection.
                 ConnectionHandler.init(mqttClient);
               }
-
-              /*onCoonectionFailure: function() {
-                console.log("Error");
-              },
-
-              onLsClient: function(lsClient) {
-                console.log("LS CLient set");
-              }*/
             });
           }
         },
@@ -116,7 +111,7 @@ require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
 
     // Setup the logout button.
     $('#logout').click(function() {
-      hideApplication(extenderSession);
+      hideApplication(coolSession);
     });
 
     /**
@@ -132,7 +127,7 @@ require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
     /**
      * Hide the application form, shows the login form and close the session.
      *
-     * @param {MQTTExtenderSession} session - The open session.
+     * @param {MQTTCoolSession} session - The open session.
      */
     function hideApplication(session) {
       $('#userListContainer').slideDown();
@@ -140,7 +135,7 @@ require(['MQTTExtender', 'app/Authentication', 'app/ConnectionHandler',
       $('#application').slideUp();
       $('#logout').hide();
 
-      // Close the MQTT Extender session.
+      // Close the MQTT.Cool session.
       session.close();
     }
   });

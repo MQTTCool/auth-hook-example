@@ -1,4 +1,7 @@
 /*
+  MQTT.Cool - http://MQTT.Cool
+  Authentication and Authorization Demo
+
   Copyright (c) Lightstreamer Srl
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,12 +71,12 @@ define(['Message', 'app/Constants'],
     /**
      * Callback invoked upon message not authorized for publishing.
      *
-     * @param {!Message} message - The message not authorized for publising.
+     * @param {!Message} message - The message not authorized for publishing.
      * @param {Object=} responseObject - The object with details about
-     *   autorization failure.
+     *   authorization failure.
      */
     function onMessageNotAuthorized(message, responseObject) {
-      // MQTT Extender refused publishing: probably this user is not enabled to
+      // MQTT.Cool refused publishing: probably this user is not enabled to
       // publish to this topic.
       if (responseObject) {
         // Show the custom error message.
@@ -92,10 +95,10 @@ define(['Message', 'app/Constants'],
      *
      * @param {string} id - The row id of not authorized topic.
      * @param {Object=} responseObject - The object with details about
-     *   autorization failure.
+     *   authorization failure.
      */
     function onSubscriptionNotAuthorized(id, responseObject) {
-      // MQTT Extender refused subscription: probably this user is not
+      // MQTT.Cool refused subscription: probably this user is not
       // enabled to subscribe to this topic filter.
       if (responseObject) {
         // Show the custom error message.
@@ -147,7 +150,7 @@ define(['Message', 'app/Constants'],
           },
 
           onNotAuthorized: function(responseObj) {
-            // MQTT Extender refused connection: probably this user is not
+            // MQTT.Cool refused connection: probably this user is not
             // enabled to connect to the target MQTT broker.
             var message = responseObj ? JSON.stringify(responseObj) : '';
             jError('Authorization to MQTT broker failed:' + message,
@@ -200,7 +203,7 @@ define(['Message', 'app/Constants'],
           onSuccess: function(responseObject) {
             $('#' + id)
               .css('background-color', 'yellow')
-              .text('Start receving message from "' + topicFilter + '"');
+              .text('Start receiving message from "' + topicFilter + '"');
           },
 
           onFailure: function(responseObject) {
@@ -220,7 +223,7 @@ define(['Message', 'app/Constants'],
      */
     function resetGrids() {
       $('#connect')
-        .click(connect()) // Add client evenet handler
+        .click(connect()) // Add client event handler
         .show();          // Show the link
 
       // Hide and clear subpanels.
