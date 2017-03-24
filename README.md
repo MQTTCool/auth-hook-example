@@ -174,11 +174,11 @@ information on how to configure broker connection parameters):
 
     -  for the direct verion:
        ```xml
-       <param name="hook">mqttextender.auth_demo.hooks.AuthHook</param>
+       <param name="hook">cool.mqtt.auth_demo.hooks.AuthHook</param>
        ```
     -  for the cached version:
        ```xml
-       <param name="hook">mqttextender.auth_demo.hooks.AuthHookWithAuthCache</param>
+       <param name="hook">cool.mqtt.auth_demo.hooks.AuthHookWithAuthCache</param>
        ```
 * Launch the MQTT.Cool Server.
 * Download this project.
