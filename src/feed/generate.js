@@ -1,4 +1,7 @@
 /*
+  MQTT.Cool - http://MQTT.Cool
+  Authentication and Authorization Demo
+
   Copyright (c) Lightstreamer Srl
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +22,7 @@ var mqtt = require('mqtt');
 // Connect to the MQTT broker listening at localhost on port 1883.
 var client = mqtt.connect('mqtt://localhost:1883');
 
-// Upon successul connection, start simulation.
+// Upon successful connection, start simulation.
 client.on('connect', function() {
 
   // Publish a random message every 500 ms.
