@@ -69,7 +69,7 @@ Here an overview of the whole sequence:
 In this demo client the Web/Application server is not actually involved and
 calls to placeholder methods are performed to obtain and extract the token.
 
-Once the user is authenticated on the MQTT.Cool Server as explained above, the
+Once the user is authenticated on the MQTT.Cool server as explained above, the
 client interface presents a link by which the user can connect to the configured
 MQTT broker. If the user is allowed to establish a connection, two additional
 panels are shown, each one showing a list of topics: from the first panel, the
@@ -180,7 +180,7 @@ information on how to configure broker connection parameters):
        ```xml
        <param name="hook">cool.mqtt.auth_demo.hooks.AuthHookWithAuthCache</param>
        ```
-* Launch the MQTT.Cool Server.
+* Launch the MQTT.Cool server.
 * Download this project.
 * RequireJS is currently hot-linked in the html page: you may want to replace it
 with a local version and/or to upgrade its version.
