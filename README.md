@@ -49,15 +49,15 @@ The Hook is passed this information and validates the token against the
 Web/Application Server that generated it (or a database or whatever back-end
 system).
 
-from `src/java/mqttextender/auth_demo/hooks/AuthHook.java`:
+from `src/java/cool/mqtt/auth_demo/hooks/AuthHook.java`:
 ```java
 [...]
 
 AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
 if (!AuthorizationResult.OK.equals(result)) {
-    throw new HookException("Unauthorized access: token invalid for user '" + user + "'",
-        result.getCode());
-   }
+    throw new HookException(result.getCode(),
+        "Unauthorized access: token invalid for user '" + user + "'");
+}
 
 [...]
 ```
@@ -89,24 +89,25 @@ for each username, on hard-coded set of permissions the following:
 - a list of subscribable topics
 - a list of topics to which messages are allowed to be delivered.
 
-from `src/java/mqttextender/auth_demo/hooks/AuthHook.java`:
+from `src/java/cool/mqtt//auth_demo/hooks/AuthHook.java`:
 ```java
 [...]
 
-AuthorizationResult result =
-    AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
+ AuthorizationResult result =
+     AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
 if (!AuthorizationResult.OK.equals(result)) {
-    throw new HookException("Unauthorized access: user '" + user +
-        "' can't connect to broker '" + brokerAddress + "'", result.getCode());
+    throw new HookException(result.getCode(), "Unauthorized access: user '" + user +
+        "' can't connect to broker '" + brokerAddress + "'");
 }
+
+[...]
 
 AuthorizationResult result =
     AuthorizationRequest.authorizeSubscribeTo(user, subscription.getTopicFilter());
 if (!AuthorizationResult.OK.equals(result)) {
-    throw new HookException(
+    throw new HookException(result.getCode(),
         String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
-            user, subscription.getTopicFilter()),
-        result.getCode());
+            user, subscription.getTopicFilter()));
 }
 
 [...]
@@ -114,10 +115,9 @@ if (!AuthorizationResult.OK.equals(result)) {
 AuthorizationResult result =
     AuthorizationRequest.authorizePublishTo(user, message.getTopicName());
 if (!AuthorizationResult.OK.equals(result)) {
-    throw new HookException(
-        String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
-            user, message.getTopicName()),
-        result.getCode());
+    throw new HookException(result.getCode(),
+        String.format("Unauthorized access: user '%s' can't publish messages to '%s'", user,
+            message.getTopicName()));
 }
 
 [...]
@@ -172,7 +172,7 @@ information on how to configure broker connection parameters):
      are going to use, in the `<param name="hook">` tag, just before
     `<master_connector>`:
 
-    -  for the direct verion:
+    -  for the direct version:
        ```xml
        <param name="hook">cool.mqtt.auth_demo.hooks.AuthHook</param>
        ```
