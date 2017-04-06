@@ -1,15 +1,15 @@
 /*
  * MQTT.Cool - http://MQTT.Cool
  * Authentication and Authorization Demo
- * 
+ *
  * Copyright (c) Lightstreamer Srl
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *     
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -81,7 +81,7 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
          * this authorizations list, can now continue.
          * We expect this method to be called only once (it is), safety controls are out of scope
          * here.
-         * 
+         *
          * @param authorizations
          *            the authorization map
          */
@@ -92,7 +92,7 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
 
         /**
          * Retrieves the authorizations map if already available, otherwise awaits.
-         * 
+         *
          * @return the authroizations map
          */
         Map<String, Map<String, AuthorizationResult>> getAuthorizations() {
@@ -132,8 +132,8 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
          */
         AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
         if (!AuthorizationResult.OK.equals(result)) {
-            throw new HookException("Unauthorized access: token invalid for user '" + user + "'",
-                result.getCode());
+            throw new HookException(result.getCode(),
+                "Unauthorized access: token invalid for user '" + user + "'");
         }
 
         /*
@@ -272,12 +272,12 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
             // Check the cached authorization results.
             AuthorizationResult result = map.get(brokerAddress);
             if (!AuthorizationResult.OK.equals(result)) {
-                throw new HookException("Unauthorized access: user '" + user +
-                    "' can't connect to broker '" + brokerAddress + "'",
+                throw new HookException(
                     result != null
                         ? result.getCode()
-                        : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED.getCode());
-
+                        : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED.getCode(),
+                    "Unauthorized access: user '" + user + "' can't connect to broker '" +
+                        brokerAddress + "'");
             }
 
             return true;
@@ -324,13 +324,12 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
             AuthorizationResult result = map.get(message.getTopicName());
             if (!AuthorizationResult.OK.equals(result)) {
                 throw new HookException(
-                    String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
-                        user, message.getTopicName()),
                     result != null
                         ? result.getCode()
-                        : AuthorizationResult.PUBLISHING_NOT_ALLOWED.getCode());
+                        : AuthorizationResult.PUBLISHING_NOT_ALLOWED.getCode(),
+                    String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
+                        user, message.getTopicName()));
             }
-
             return true;
         }
 
@@ -376,11 +375,11 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
             AuthorizationResult result = map.get(subscription.getTopicFilter());
             if (!AuthorizationResult.OK.equals(result)) {
                 throw new HookException(
-                    String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
-                        user, subscription.getTopicFilter()),
                     result != null
                         ? result.getCode()
-                        : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED.getCode());
+                        : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED.getCode(),
+                    String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
+                        user, subscription.getTopicFilter()));
             }
 
             return true;
