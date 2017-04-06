@@ -1,11 +1,15 @@
 /*
  * MQTT.Cool - http://MQTT.Cool
  * Authentication and Authorization Demo
+ *
  * Copyright (c) Lightstreamer Srl
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,8 +63,8 @@ public class AuthHook implements IMqttCoolHook {
          */
         AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
         if (!AuthorizationResult.OK.equals(result)) {
-            throw new HookException("Unauthorized access: token invalid for user '" + user + "'",
-                result.getCode());
+            throw new HookException(result.getCode(),
+                "Unauthorized access: token invalid for user '" + user + "'");
         }
 
         /*
@@ -121,8 +125,8 @@ public class AuthHook implements IMqttCoolHook {
         AuthorizationResult result =
             AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
         if (!AuthorizationResult.OK.equals(result)) {
-            throw new HookException("Unauthorized access: user '" + user +
-                "' can't connect to broker '" + brokerAddress + "'", result.getCode());
+            throw new HookException(result.getCode(), "Unauthorized access: user '" + user +
+                "' can't connect to broker '" + brokerAddress + "'");
         }
 
         return true;
@@ -152,10 +156,9 @@ public class AuthHook implements IMqttCoolHook {
         AuthorizationResult result =
             AuthorizationRequest.authorizePublishTo(user, message.getTopicName());
         if (!AuthorizationResult.OK.equals(result)) {
-            throw new HookException(
-                String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
-                    user, message.getTopicName()),
-                result.getCode());
+            throw new HookException(result.getCode(),
+                String.format("Unauthorized access: user '%s' can't publish messages to '%s'", user,
+                    message.getTopicName()));
         }
 
         return true;
@@ -185,10 +188,9 @@ public class AuthHook implements IMqttCoolHook {
         AuthorizationResult result =
             AuthorizationRequest.authorizeSubscribeTo(user, subscription.getTopicFilter());
         if (!AuthorizationResult.OK.equals(result)) {
-            throw new HookException(
+            throw new HookException(result.getCode(),
                 String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
-                    user, subscription.getTopicFilter()),
-                result.getCode());
+                    user, subscription.getTopicFilter()));
         }
 
         return true;
