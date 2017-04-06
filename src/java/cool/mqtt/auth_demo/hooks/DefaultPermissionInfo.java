@@ -1,11 +1,15 @@
 /*
  * MQTT.Cool - http://MQTT.Cool
  * Authentication and Authorization Demo
+ *
  * Copyright (c) Lightstreamer Srl
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +104,7 @@ class DefaultPermissionInfo implements IPermissionInfo {
 
         /**
          * Grant the permission to connect to the specified MQTT broker address.
-         * 
+         *
          * @param broker
          *            the MQTT broker address to connect to
          * @return a reference to this object
@@ -112,7 +116,7 @@ class DefaultPermissionInfo implements IPermissionInfo {
 
         /**
          * Grant the permission to subscribe to the specified topic.
-         * 
+         *
          * @param topic
          *            the subscribable topic
          * @return a reference to this object
@@ -124,7 +128,7 @@ class DefaultPermissionInfo implements IPermissionInfo {
 
         /**
          * Grant the permission to publish to the specified topic.
-         * 
+         *
          * @param topic
          *            the topic allowed for publishing
          * @return a reference to this object
@@ -137,7 +141,7 @@ class DefaultPermissionInfo implements IPermissionInfo {
         /**
          * Builds a new instance of {@code IAuthorizationInfo} which contains all provided
          * authorizations.
-         * 
+         *
          * @return an instance of {@code IAuthorizationInfo}.
          */
         public IPermissionInfo build() {
