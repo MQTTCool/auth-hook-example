@@ -1,5 +1,5 @@
 /*
-  MQTT.Cool - http://MQTT.Cool
+  MQTT.cool - http://www.lightstreamer.com
   Authentication and Authorization Demo
 
   Copyright (c) Lightstreamer Srl
@@ -76,7 +76,7 @@ define(['Message', 'app/Constants'],
      *   authorization failure.
      */
     function onMessageNotAuthorized(message, responseObject) {
-      // MQTT.Cool refused publishing: probably this user is not enabled to
+      // MQTT.cool refused publishing: probably this user is not enabled to
       // publish to this topic.
       if (responseObject) {
         // Show the custom error message.
@@ -98,7 +98,7 @@ define(['Message', 'app/Constants'],
      *   authorization failure.
      */
     function onSubscriptionNotAuthorized(id, responseObject) {
-      // MQTT.Cool refused subscription: probably this user is not
+      // MQTT.cool refused subscription: probably this user is not
       // enabled to subscribe to this topic filter.
       if (responseObject) {
         // Show the custom error message.
@@ -150,7 +150,7 @@ define(['Message', 'app/Constants'],
           },
 
           onNotAuthorized: function(responseObj) {
-            // MQTT.Cool refused connection: probably this user is not
+            // MQTT.cool refused connection: probably this user is not
             // enabled to connect to the target MQTT broker.
             var message = responseObj ? JSON.stringify(responseObj) : '';
             jError('Authorization to MQTT broker failed:' + message,

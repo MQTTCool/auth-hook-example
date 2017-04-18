@@ -1,5 +1,5 @@
 /*
- * MQTT.Cool - http://MQTT.Cool
+ * MQTT.cool - http://www.lightstreamer.com
  * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
@@ -143,19 +143,18 @@ public class AuthHookWithAuthCache implements IMqttCoolHook {
         sessionIdToUsers.put(sessionId, user);
 
         /*
-         * NOTE: as documented in the MQTT.Cool Documentation, the canOpenSession call is made
-         * during the notifyNewSession call of the MQTT.Cool Metadata Adapter. For this reason,
-         * if we have to block in order to perform the lookup for the client, a specific "SET"
-         * thread pool may be configured in the mqtt_master_connector_conf.xml configuration file
-         * for MQTT.Cool. We could also speed up things using a local cache.
+         * NOTE: as the canOpenSession call is blocking, a further blocking call you may need to
+         * perform the client lookup may require a proper configuration of the specific "SET" thread
+         * pool mqtt_master_connector_conf.xml file for MQTT.cool.
+         * We could also speed up things using a local cache.
          */
 
         /*
          * NOTE 2: it is common practice for a webserver to place its session token inside a cookie;
-         * if the cookie, the SDK for Web Client, and MQTT.Cool are properly configured, such cookie
+         * if the cookie, the SDK for Web Client, and MQTT.cool are properly configured, such cookie
          * is available in the HTTP headers map, which can be obtained from the clientContext map
          * with the "HTTP_HEADERS" key; you might be tempted to use it to authenticate the user:
-         * this approach is discouraged, please check the MQTT.Cool configuration file for the
+         * this approach is discouraged, please check the MQTT.cool configuration file for the
          * <use_protected_js> and <forward_cookies> documentation for further info about the topic.
          */
 

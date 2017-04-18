@@ -1,5 +1,5 @@
 /*
- * MQTT.Cool - http://MQTT.Cool
+ * MQTT.cool - http://www.lightstreamer.com
  * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
@@ -24,17 +24,16 @@ package cool.mqtt.auth_demo.hooks;
 public interface IPermissionInfo {
 
     /**
-     * Asks if permission to connect to the specified MQTT broker address is authorized.
+     * Asks whether the permission to connect to the specified MQTT broker address is authorized.
      *
      * @param broker
      *            the MQTT broker address to connect to
      * @return {@code true} if permission is authorized, {@code false} otherwise
-     *         F
      */
     boolean allowConnectionTo(String broker);
 
     /**
-     * Asks if permission to subscribe to the specified topic is authorized.
+     * Asks whether the permission to subscribe to the specified topic is authorized.
      *
      * @param topic
      *            the topic to subscribe to
@@ -43,7 +42,7 @@ public interface IPermissionInfo {
     boolean allowSubscribeTo(String topic);
 
     /**
-     * Asks if permission to publish to the specified topic is authorized.
+     * Asks whether the permission to publish to the specified topic is authorized.
      *
      * @param topic
      *            the topic to which publishing a MQTT message.
