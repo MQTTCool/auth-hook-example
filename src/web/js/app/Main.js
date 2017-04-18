@@ -25,7 +25,7 @@ require(['MQTTCool', 'app/Authentication', 'app/ConnectionHandler',
   'app/Constants'],
   function(MQTTCool, Authentication, ConnectionHandler, Constants) {
 
-    // The reference to the session opened against the MQTT.Cool Server.
+    // The reference to the session opened against the MQTT.cool Server.
     var coolSession = null;
     $('#login_form :submit').click(function(event) {
       // The user wants to authenticate.
@@ -70,14 +70,14 @@ require(['MQTTCool', 'app/Authentication', 'app/ConnectionHandler',
             jError('Authentication Failed: wrong user/password',
               Constants.J_NOTIFY_OPTIONS_ERR);
           } else {
-            // Now it is possible to connect to MQTT.Cool, by sending the
+            // Now it is possible to connect to MQTT.cool, by sending the
             // token, not the password.
             MQTTCool.connect(Constants.SERVER, user, token, {
-              // Intercept potential errors on the MQTT.Cool Server, e.g.: the
+              // Intercept potential errors on the MQTT.cool Server, e.g.: the
               // token expired while connecting.
               onConnectionFailure: function(errorType, responseObj) {
                 var customMsg = responseObj ? JSON.stringify(responseObj) : '';
-                jError('Connection to MQTT.Cool refused: ' + errorType +
+                jError('Connection to MQTT.cool refused: ' + errorType +
                   ' ' + customMsg, Constants.J_NOTIFY_OPTIONS_ERR);
               },
 
@@ -135,10 +135,7 @@ require(['MQTTCool', 'app/Authentication', 'app/ConnectionHandler',
       $('#application').slideUp();
       $('#logout').hide();
 
-      // Close the MQTT.Cool session.
+      // Close the MQTT.cool session.
       session.close();
     }
   });
-
-
-
