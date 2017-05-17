@@ -1,6 +1,6 @@
-# MQTT.cool - Authentication and Authorization Demo - HTML Client
+# MQTT.Cool - Authentication and Authorization Demo - HTML Client
 
-The **MQTT.cool Authentication and Authorization Demo** is a simple example
+The **MQTT.Cool Authentication and Authorization Demo** is a simple example
 illustrating *authentication* and *authorization* mechanisms when an
 *external Web/Application Server* is involved in the process.
 
@@ -12,9 +12,9 @@ implementation, which supplies user validation and authorization logics.
 ## Details
 
 This *Authentication and Authorization Demo* illustrates the typical best
-practice used for MQTT.cool Web applications, when a Web/Application server
+practice used for MQTT.Cool Web applications, when a Web/Application server
 is involved in the process. The actual authentication is usually handled by the
-legacy Web/Application server, irrespective of MQTT.cool.
+legacy Web/Application server, irrespective of MQTT.Cool.
 
 from `src/web/app/Main.js`:
 ```js
@@ -30,15 +30,15 @@ from `src/web/app/Main.js`:
 [...]
 ```
 Some sort of token is sent back to the Client through cookies, response payload
-or any other technique. When the MQTT.cool Web Client creates a new session,
+or any other technique. When the MQTT.Cool Web Client creates a new session,
 instead of sending again the full credentials (usually involving a password) to
-MQTT.cool, it sends just the username and the token.
+MQTT.Cool, it sends just the username and the token.
 
 from `src/web/app/Main.js`:
 ```js
 [...]
 
-// Now it is possible to connect to MQTT.cool, by sending the
+// Now it is possible to connect to MQTT.Cool, by sending the
 // token, not the password.
 MQTTCool.connect(Constants.SERVER, user, token, {
 
@@ -69,7 +69,7 @@ Here an overview of the whole sequence:
 In this demo client the Web/Application server is not actually involved and
 calls to placeholder methods are performed to obtain and extract the token.
 
-Once the user is authenticated on the MQTT.cool server as explained above, the
+Once the user is authenticated on the MQTT.Cool server as explained above, the
 client interface presents a link by which the user can connect to the configured
 MQTT broker. If the user is allowed to establish a connection, two additional
 panels are shown, each one showing a list of topics: from the first panel, the
@@ -79,7 +79,7 @@ accepted and then submitted to the MQTT broker, incoming messages are displayed
 on the selected row; in case a publishing is accepted and then delivered to the
 MQTT broker, the user is invited to send a new one.
 
-Every time a connection, a subscription or a publishing is requested, MQTT.cool
+Every time a connection, a subscription or a publishing is requested, MQTT.Cool
 proceeds with the authorization check, by delegating to the Hook the
 responsibility to verify if the user issuing the request is actually
 authorized to access the resource is asking for. A real case might query an
@@ -137,16 +137,16 @@ subscription panel once the related subscription is made.
 
 ## Install
 
-If you want to install a version of this demo pointing to your local MQTT.cool,
+If you want to install a version of this demo pointing to your local MQTT.Cool,
 follows these steps.
 
 * As prerequisite, this demo needs a MQTT infrastructure to run. You can choose
 whatever MQTT broker you prefer, or may also use one of the available public
 broker (an update-to-date list is maintained at
 [https://github.com/mqtt/mqtt.github.io/wiki/public_brokers]()).
-* Configure a MQTT.cool instance. Please refer to Lightstreamer
+* Configure a MQTT.Cool instance. Please refer to Lightstreamer
 web site [download page](http://download.lightstreamer.com/) to find the
-MQTT.cool download package. MQTT.cool comes with a set of predefined
+MQTT.Cool download package. MQTT.Cool comes with a set of predefined
 configurations for connecting with local MQTT server instances, as well as with
 the most common publicly accessible brokers. If you want to provide a new custom
 configuration, open the `mqtt_master_connector_conf.xml` file located under
@@ -165,7 +165,7 @@ information on how to configure broker connection parameters):
   ```
   - Get the `deploy.zip` file from the releases of this project, unzip it and
     copy the `MQTT_Auth_demo.jar` from `lib` into the `mqtt_connectors/lib`
-    folder of your MQTT.cool installation.
+    folder of your MQTT.Cool installation.
   - As the project contains two different Hook implementations, `mqttextender.auth_demo.hooks.AuthHook` and
     `mqttextender.auth_demo.hooks.AuthHookWithAuthCache`, edit the
     `mqtt_master_connector_conf.xml` file adding the class name of the Hook you
@@ -180,13 +180,13 @@ information on how to configure broker connection parameters):
        ```xml
        <param name="hook">cool.mqtt.auth_demo.hooks.AuthHookWithAuthCache</param>
        ```
-* Launch the MQTT.cool server.
+* Launch the MQTT.Cool server.
 * Download this project.
 * RequireJS is currently hot-linked in the html page: you may want to replace it
 with a local version and/or to upgrade its version.
 * jQuery is currently hot-linked in the html page: you may want to replace it
 with a local version and/or to upgrade its version.
-* Deploy this demo on MQTT.cool (used as Web server) or in any external Web
+* Deploy this demo on MQTT.Cool (used as Web server) or in any external Web
 server. If you choose the former, create a folder with name such as
 `AuthDemo` under the `<MQTT.COOL_HOME>/pages`, and copy there the contents of
 the `src/web` folder of this project.
@@ -214,11 +214,11 @@ steps:
   ```
 
 * Copy the just compiled `MQTT_Auth_demo.jar` in the `mqtt_connectors/lib`
-folder of your MQTT.cool installation.
+folder of your MQTT.Cool installation.
 
 ## Configure
 
-The demo assumes that MQTT.cool is launched from localhost, but if you need
+The demo assumes that MQTT.Cool is launched from localhost, but if you need
 to target a different server, search in `web/js/app/Constants.js` this line:
 ```js
 var SERVER_ADDRESS = 'localhost:8080';
@@ -227,7 +227,7 @@ var SERVER_ADDRESS = 'localhost:8080';
 and replace `localhost:8080` with required address.
 
 Further, the demo will look for the **mosquitto** alias, which is predefined in
-the default MQTT.cool configuration. Once more, if you need to target a
+the default MQTT.Cool configuration. Once more, if you need to target a
 different MQTT broker, and provided that relative connection parameters are
 already defined as shown above, modify the following line in
 `web/js/app/Main.js`:
@@ -252,8 +252,8 @@ node generate.js
 
 ## See Also
 
-## MQTT.cool Compatibility Notes
+## MQTT.Cool Compatibility Notes
 
-* Compatible with MQTT.cool Web Client SDK version 1.0 or
+* Compatible with MQTT.Cool Web Client SDK version 1.0 or
 newer.
-* Compatible with MQTT.cool since version 1.0 or newer.
+* Compatible with MQTT.Cool since version 1.0 or newer.
