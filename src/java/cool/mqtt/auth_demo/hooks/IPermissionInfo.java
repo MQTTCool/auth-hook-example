@@ -1,5 +1,5 @@
 /*
- * MQTT.cool - http://www.lightstreamer.com
+ * MQTT.Cool - http://www.lightstreamer.com
  * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl

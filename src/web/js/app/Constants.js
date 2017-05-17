@@ -1,5 +1,5 @@
 /*
-  MQTT.cool - http://www.lightstreamer.com
+  MQTT.Cool - http://www.lightstreamer.com
   Authentication and Authorization Demo
 
   Copyright (c) Lightstreamer Srl
@@ -21,7 +21,7 @@ define(function() {
   var protocolToUse = document.location.protocol != 'file:' ?
     document.location.protocol : 'http:';
 
-  // Target MQTT.cool address. Change it with if required.
+  // Target MQTT.Cool address. Change it with if required.
   var SERVER_ADDRESS = 'localhost:8080';
   return {
     SERVER: protocolToUse + '//' + SERVER_ADDRESS,
