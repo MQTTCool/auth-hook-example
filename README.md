@@ -140,11 +140,11 @@ subscription panel once the related subscription is made.
 If you want to install a version of this demo pointing to your local MQTT.Cool,
 follows these steps.
 
-* As prerequisite, this demo needs a MQTT infrastructure to run. You can choose
+* As prerequisite, this demo needs an MQTT infrastructure to run. You can choose
 whatever MQTT broker you prefer, or may also use one of the available public
 broker (an update-to-date list is maintained at
 [https://github.com/mqtt/mqtt.github.io/wiki/public_brokers]()).
-* Configure a MQTT.Cool instance. Please refer to Lightstreamer
+* Configure an MQTT.Cool instance. Please refer to Lightstreamer
 web site [download page](http://download.lightstreamer.com/) to find the
 MQTT.Cool download package. MQTT.Cool comes with a set of predefined
 configurations for connecting with local MQTT server instances, as well as with
