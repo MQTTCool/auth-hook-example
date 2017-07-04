@@ -45,7 +45,7 @@ public interface IPermissionInfo {
      * Asks whether the permission to publish to the specified topic is authorized.
      *
      * @param topic
-     *            the topic to which publishing a MQTT message.
+     *            the topic to which publishing an MQTT message.
      * @return {@code true} if permission is authorized, {@code false} otherwise
      */
     boolean allowPublishTo(String topic);
