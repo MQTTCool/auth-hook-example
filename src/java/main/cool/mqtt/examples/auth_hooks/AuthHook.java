@@ -12,23 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cool.mqtt.auth_demo.hooks;
+package cool.mqtt.examples.auth_hooks;
 
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cool.mqtt.hooks.HookException;
-import cool.mqtt.hooks.IMqttBrokerConfig;
-import cool.mqtt.hooks.IMqttConnectOptions;
-import cool.mqtt.hooks.IMqttCoolHook;
-import cool.mqtt.hooks.IMqttMessage;
-import cool.mqtt.hooks.IMqttSubscription;
+import cool.mqtt.hooks.MQTTCoolHook;
+import cool.mqtt.hooks.MqttBrokerConfig;
+import cool.mqtt.hooks.MqttConnectOptions;
+import cool.mqtt.hooks.MqttMessage;
+import cool.mqtt.hooks.MqttSubscription;
 
 /**
  * Hook class for authorization checks.
  */
-public class AuthHook implements IMqttCoolHook {
+public class AuthHook implements MQTTCoolHook {
 
     /** Map for sessionId-user pairs */
     private final ConcurrentHashMap<String, String> sessionIdToUsers = new ConcurrentHashMap<>();
@@ -39,7 +39,7 @@ public class AuthHook implements IMqttCoolHook {
     }
 
     @Override
-    public IMqttBrokerConfig resolveAlias(String alias) throws HookException {
+    public MqttBrokerConfig resolveAlias(String alias) throws HookException {
         // Actually never invoked.
         return null;
     }
@@ -98,7 +98,7 @@ public class AuthHook implements IMqttCoolHook {
 
     @Override
     public boolean canConnect(String sessionId, String clientId, String brokerAddress,
-        IMqttConnectOptions connectOptions) throws HookException {
+        MqttConnectOptions connectOptions) throws HookException {
 
         /*
          * A user is trying to connect to the specified MQTT broker, we have to verify if he is
@@ -129,7 +129,7 @@ public class AuthHook implements IMqttCoolHook {
 
     @Override
     public boolean canPublish(String sessionId, String clientId, String brokerAddress,
-        IMqttMessage message) throws HookException {
+        MqttMessage message) throws HookException {
 
         /*
          * A user is trying to publish a message to a topic, we have to verify if he is authorized
@@ -161,7 +161,7 @@ public class AuthHook implements IMqttCoolHook {
 
     @Override
     public boolean canSubscribe(String sessionId, String clientId, String brokerAddress,
-        IMqttSubscription subscription) throws HookException {
+        MqttSubscription subscription) throws HookException {
 
         /*
          * A user is trying to subscribe to a topic, we have to verify if he is authorized to
