@@ -140,16 +140,16 @@ subscription panel once the related subscription is made.
 If you want to install a version of this demo pointing to your local MQTT.Cool,
 follows these steps.
 
-* As prerequisite, this demo needs an MQTT infrastructure to run. You can choose
+* As prerequisite, this demo needs an up and running MQTT broker. You can choose
 whatever MQTT broker you prefer, or may also use one of the available public
-broker (an update-to-date list is maintained at
+broker (an up-to-date list is maintained at
 [https://github.com/mqtt/mqtt.github.io/wiki/public_brokers]()).
-* Configure an MQTT.Cool instance. Please refer to Lightstreamer
-web site [download page](http://download.lightstreamer.com/) to find the
-MQTT.Cool download package. MQTT.Cool comes with a set of predefined
-configurations for connecting with local MQTT server instances, as well as with
-the most common publicly accessible brokers. If you want to provide a new custom
-configuration, open the `mqtt_master_connector_conf.xml` file located under
+* Configure an MQTT.Cool instance. Please refer to Lightstreamer web site
+[download page](http://download.lightstreamer.com/) to find the MQTT.Cool
+download package. MQTT.Cool comes with a set of predefined configurations for
+connecting with local MQTT server instances, as well as with the most common
+publicly accessible brokers. If you want to provide a new custom configuration,
+open the `mqtt_master_connector_conf.xml` file located under
 `<MQTT.COOL_HOME>/mqtt_connectors` and provide a set of entries similar to the
 following (please refer to the inline documentation for more in-depth
 information on how to configure broker connection parameters):
@@ -157,7 +157,7 @@ information on how to configure broker connection parameters):
   ```xml
   ...
   <!-- MQTT broker connection parameters for a local instance
-  listening on port 1883, aliased by "mybroker". -->
+       listening on port 1883, aliased by "mybroker". -->
   <param name="mybroker.server_address">tcp://localhost:1883</param>
   <param name="mybroker.connection_timeout">5</param>
   <param name="mybroker.keep_alive">20</param>
@@ -182,14 +182,16 @@ information on how to configure broker connection parameters):
        ```
 * Launch the MQTT.Cool server.
 * Download this project.
+* As the lastest version of the MQTT.Cool JavaScript library is always available
+through [`unpkg`](https://unpkg.com/#/), it is hot-linked in the html page.
 * RequireJS is currently hot-linked in the html page: you may want to replace it
 with a local version and/or to upgrade its version.
 * jQuery is currently hot-linked in the html page: you may want to replace it
 with a local version and/or to upgrade its version.
 * Deploy this demo on MQTT.Cool (used as Web server) or in any external Web
 server. If you choose the former, create a folder with name such as
-`AuthDemo` under the `<MQTT.COOL_HOME>/pages`, and copy there the contents of
-the `src/web` folder of this project.
+`AuthDemo` under the `<MQTT.COOL_HOME>/pages` folder, and copy there the
+contents of `src/web` of this project.
 * If required, install Node.js
 * From `src/feed` folder, get the [MQTT.js](https://github.com/mqttjs/MQTT.js)
 client library, which is required by the feed application:
@@ -218,13 +220,15 @@ folder of your MQTT.Cool installation.
 
 ## Configure
 
-The demo assumes that MQTT.Cool is launched from localhost, but if you need
-to target a different server, search in `web/js/app/Constants.js` this line:
+The demo assumes that the MQTT.Cool server is launched from localhost, but if
+you need to target a different server, search in `web/js/app/Constants.js` this
+line:
+
 ```js
 var SERVER_ADDRESS = 'localhost:8080';
 ```
 
-and replace `localhost:8080` with required address.
+and change it accordingly.
 
 Further, the demo will look for the **mosquitto** alias, which is predefined in
 the default MQTT.Cool configuration. Once more, if you need to target a
@@ -236,8 +240,8 @@ already defined as shown above, modify the following line in
 var mqttClient = mqttCoolSession.createClient('mosquitto');
 ```
 
-and change it by replacing **mosquitto** with new alias mapping the MQTT broker
-you are going to use.
+and change it by replacing **mosquitto** with the new alias that maps the MQTT
+broker you are going to use.
 
 ## Launch
 
@@ -246,14 +250,13 @@ to the address according to the host and/or the name of the folder where you
 deployed the project.
 
 From the `feed` folder, run the feed application to publish random messages:
-```
+
+```sh
 node generate.js
 ```
 
-## See Also
-
 ## MQTT.Cool Compatibility Notes
 
-* Compatible with MQTT.Cool Web Client SDK version 1.0 or
-newer.
+* Compatible with MQTT.Cool SDK for Web Client version 1.0.0 or newer.
 * Compatible with MQTT.Cool since version 1.0 or newer.
+
