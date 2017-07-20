@@ -210,18 +210,18 @@ by the feed application:
 ## Build
 
 To build your own version of `demo-auth-hooks.jar`, instead of using the one
-provided in the `deploy.zip` file from the [Install](#Install) section above,
+provided in the `deploy.zip` file from the [Install](##Install) section above,
 follow these steps:
 
-* Assuming that `maven` is installed on you machine, build the Hook by executing
-the `package` goal:
+* Assuming that `maven` is installed on your machine, build the Hook by
+executing the `package` goal:
 
 ```sh
 $ mvn package
 ```
 
 * Locate the jar file (which should be in the `target` folder) and drop it into
-the `mqtt_connectors/lib` folder of your MQTT.Cool installation.
+`<MQTT.COOL_HOME>/lib`.
 
 ## Configure
 
