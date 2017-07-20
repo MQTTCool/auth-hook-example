@@ -43,7 +43,7 @@ from `src/web/app/Main.js`:
 
 // Now it is possible to connect to MQTT.Cool, by sending the
 // token, not the password.
-MQTTCool.connect(Constants.SERVER, user, token, {
+openSession.connect(Constants.SERVER, user, token, {
 
 [...]
 ```
@@ -171,8 +171,9 @@ information on how to configure broker connection parameters):
   - Get the `deploy.zip` file from the releases of this project, unzip it and
     copy the `demo-auth-hooks.jar` from `lib` into the `mqtt_connectors/lib`
     folder of your MQTT.Cool installation.
-  - As the project contains two different Hook implementations, `mqttextender.auth_demo.hooks.AuthHook` and
-    `mqttextender.auth_demo.hooks.AuthHookWithAuthCache`, edit the
+  - As the project contains two different Hook implementations,
+    `cool.mqtt.examples.auth_hooks.AuthHook` and
+    `cool.mqtt.examples.auth_hooks.AuthHookWithAuthCache`, edit the
     `mqtt_master_connector_conf.xml` file adding the class name of the Hook you
      are going to use, in the `<param name="hook">` tag, just before
     `<master_connector>`:
