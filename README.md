@@ -210,7 +210,7 @@ by the feed application:
 ## Build
 
 To build your own version of `demo-auth-hooks.jar`, instead of using the one
-provided in the `deploy.zip` file from the [Install](#Install) section above,
+provided in the `deploy.zip` file from the [Install](#install) section above,
 follow these steps:
 
 * Assuming that `maven` is installed on your machine, build the Hook by
