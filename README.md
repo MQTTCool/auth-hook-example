@@ -209,7 +209,7 @@ by the feed application:
 
 ## Build
 
-To build your own version of `demo-auth-hooks.jar`, instead of using the one
+To build your own version of `demo-auth-hooks-1.0.0.jar`, instead of using the one
 provided in the `deploy.zip` file from the [Install](#install) section above,
 follow these steps:
 
