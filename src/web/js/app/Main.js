@@ -21,9 +21,9 @@
 // to a WebServer that will answer with a session token (or refusing the
 // request). As the WebServer is not actually deployed, authentication on the
 // client will only be simulated (see the js/Authentication.js).
-require(['MQTTCool', 'app/Authentication', 'app/ConnectionHandler',
-  'app/Constants'],
-  function(MQTTCool, Authentication, ConnectionHandler, Constants) {
+require(['mqttcool/openSession', './Authentication', './ConnectionHandler',
+  './Constants'],
+  function(openSession, Authentication, ConnectionHandler, Constants) {
 
     // The reference to the session opened against the MQTT.Cool Server.
     var coolSession = null;
@@ -72,7 +72,7 @@ require(['MQTTCool', 'app/Authentication', 'app/ConnectionHandler',
           } else {
             // Now it is possible to connect to MQTT.Cool, by sending the
             // token, not the password.
-            MQTTCool.connect(Constants.SERVER, user, token, {
+            openSession(Constants.SERVER, user, token, {
               // Intercept potential errors on the MQTT.Cool Server, e.g.: the
               // token expired while connecting.
               onConnectionFailure: function(errorType, responseObj) {
