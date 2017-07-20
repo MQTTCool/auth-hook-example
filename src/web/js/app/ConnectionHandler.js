@@ -17,7 +17,7 @@
   limitations under the License.
 */
 
-define(['Message', 'app/Constants'],
+define(['mqttcool/Message', './Constants'],
   function(Message, Constants) {
     // The MQTT client instance used to interact with the target MQTT broker.
     var mqttClient;
