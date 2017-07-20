@@ -17,6 +17,7 @@ is involved in the process. The actual authentication is usually handled by the
 legacy Web/Application server, irrespective of MQTT.Cool.
 
 from `src/web/app/Main.js`:
+
 ```js
 [...]
 
@@ -29,12 +30,14 @@ from `src/web/app/Main.js`:
   },
 [...]
 ```
+
 Some sort of token is sent back to the Client through cookies, response payload
 or any other technique. When the MQTT.Cool Web Client creates a new session,
 instead of sending again the full credentials (usually involving a password) to
 MQTT.Cool, it sends just the username and the token.
 
 from `src/web/app/Main.js`:
+
 ```js
 [...]
 
@@ -49,7 +52,8 @@ The Hook is passed this information and validates the token against the
 Web/Application Server that generated it (or a database or whatever back-end
 system).
 
-from `src/java/cool/mqtt/auth_demo/hooks/AuthHook.java`:
+from `src/java/main/cool/mqtt/examples/auth_hooks/AuthHook.java`:
+
 ```java
 [...]
 
@@ -89,7 +93,8 @@ for each username, on hard-coded set of permissions the following:
 - a list of subscribable topics
 - a list of topics to which messages are allowed to be delivered.
 
-from `src/java/cool/mqtt//auth_demo/hooks/AuthHook.java`:
+from `src/java/main/cool/mqtt/examples/auth_hooks/AuthHook.java`:
+
 ```java
 [...]
 
@@ -164,7 +169,7 @@ information on how to configure broker connection parameters):
   ...
   ```
   - Get the `deploy.zip` file from the releases of this project, unzip it and
-    copy the `MQTT_Auth_demo.jar` from `lib` into the `mqtt_connectors/lib`
+    copy the `demo-auth-hooks.jar` from `lib` into the `mqtt_connectors/lib`
     folder of your MQTT.Cool installation.
   - As the project contains two different Hook implementations, `mqttextender.auth_demo.hooks.AuthHook` and
     `mqttextender.auth_demo.hooks.AuthHookWithAuthCache`, edit the
@@ -174,11 +179,11 @@ information on how to configure broker connection parameters):
 
     -  for the direct version:
        ```xml
-       <param name="hook">cool.mqtt.auth_demo.hooks.AuthHook</param>
+       <param name="hook">cool.mqtt.examples.auth_hooks.AuthHook</param>
        ```
     -  for the cached version:
        ```xml
-       <param name="hook">cool.mqtt.auth_demo.hooks.AuthHookWithAuthCache</param>
+       <param name="hook">cool.mqtt.examples.auth_hooks.AuthHookWithAuthCache</param>
        ```
 * Launch the MQTT.Cool server.
 * Download this project.
@@ -202,21 +207,19 @@ client library, which is required by the feed application:
 
 ## Build
 
-To build your own version of `MQTT_Auth_demo.jar`, instead of using the one
-provided in the `deploy.zip` file from the Install section above, follow these
-steps:
+To build your own version of `demo-auth-hooks.jar`, instead of using the one
+provided in the `deploy.zip` file from the [Install](#Install) section above,
+follow these steps:
 
-* Assuming javac and jar are available on the path, from the command line run:
-  ```sh
-  javac -classpath ./lib/mqtt.cool-hook-interface.jar -d ./classes ./src/cool/mqtt/auth_demo/hooks/*.java
-  ```
-* Then create the jar:
- ```sh
-  jar cvf MQTT_Auth_demo.jar -C classes ./
-  ```
+* Assuming that `maven` is installed on you machine, build the Hook by executing
+the `package` goal:
 
-* Copy the just compiled `MQTT_Auth_demo.jar` in the `mqtt_connectors/lib`
-folder of your MQTT.Cool installation.
+```sh
+$ mvn package
+```
+
+* Locate the jar file (which should be in the `target` folder) and drop it into
+the `mqtt_connectors/lib` folder of your MQTT.Cool installation.
 
 ## Configure
 
