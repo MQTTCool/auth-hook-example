@@ -7,7 +7,7 @@ illustrating *authentication* and *authorization* mechanisms when an
 This project includes simple web client front-end example and hook
 implementation, which supplies user validation and authorization logics.
 
-![screenshot](screen_large.png)
+![screenshot](screen-large.png)
 
 ## Details
 
