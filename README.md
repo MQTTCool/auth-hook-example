@@ -1,4 +1,4 @@
-# MQTT.Cool - Authentication and Authorization Demo - HTML Client
+# MQTT.Cool - Authentication and Authorization Demo - Java Hook
 
 The **MQTT.Cool Authentication and Authorization Demo** is a simple example
 illustrating *authentication* and *authorization* mechanisms when an
