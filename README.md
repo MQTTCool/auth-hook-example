@@ -235,10 +235,10 @@ var SERVER_ADDRESS = 'localhost:8080';
 
 and change it accordingly.
 
-Further, the demo will look for the **mosquitto** alias, which is predefined in
-the default MQTT.Cool configuration. Once more, if you need to target a
-different MQTT broker, and provided that relative connection parameters are
-already defined as shown above, modify the following line in
+Further, the demo will look for the **mosquitto** alias, which is one of the
+predefined configurations in `mqtt_master_connector_conf.xml`. Once more, if you
+need to target a different MQTT broker, and provided that relative connection
+parameters are already defined as shown above, modify the following line in
 `src/web/js/app/Main.js`:
 
 ```js
@@ -263,6 +263,7 @@ node generate.js
 
 ## MQTT.Cool Compatibility Notes
 
-* Compatible with MQTT.Cool SDK for Web Client version 1.0.0 or newer.
+* Compatible with MQTT.Cool SDK for Web Clients version 1.0.0 or newer.
+* Compatible with MQTT.Cool SDK for Java Hooks version 1.0.0 or newer.
 * Compatible with MQTT.Cool since version 1.0 or newer.
 
