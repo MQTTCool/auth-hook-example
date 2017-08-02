@@ -226,8 +226,8 @@ $ mvn package
 ## Configure
 
 The demo assumes that the MQTT.Cool server is launched from localhost, but if
-you need to target a different server, search in `web/js/app/Constants.js` this
-line:
+you need to target a different server, search in `src/web/js/app/Constants.js`
+this line:
 
 ```js
 var SERVER_ADDRESS = 'localhost:8080';
@@ -239,7 +239,7 @@ Further, the demo will look for the **mosquitto** alias, which is predefined in
 the default MQTT.Cool configuration. Once more, if you need to target a
 different MQTT broker, and provided that relative connection parameters are
 already defined as shown above, modify the following line in
-`web/js/app/Main.js`:
+`src/web/js/app/Main.js`:
 
 ```js
 var mqttClient = mqttCoolSession.createClient('mosquitto');
