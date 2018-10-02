@@ -1,0 +1,13 @@
+{
+  "name": "feed",
+  "version": "1.0.0",
+  "description": "Random MQTT messages publisher to numbered topics",
+  "author": "Lightstreamer Srl",
+  "main": "generate.js",
+  "scripts": {
+    "start": "node generate.js"
+  },
+  "dependencies": {
+    "mqtt": "^2.18.0"
+  }
+}

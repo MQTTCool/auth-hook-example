@@ -199,12 +199,10 @@ server. If you choose the former, create a folder with name such as
 `AuthDemo` under the `<MQTT.COOL_HOME>/pages` folder, and copy there the
 contents of `src/web` of this project.
 * If required, install Node.js
-* From the `src/feed` folder, get the
-[MQTT.js](https://github.com/mqttjs/MQTT.js) client library, which is required
-by the feed application:
+* From the `src/feed` folder, locally install the feed application:
 
  ```
- npm install mqtt
+ npm install
  ```
 
 ## Build
@@ -258,7 +256,7 @@ the project.
 From the `feed` folder, run the feed application to publish random messages:
 
 ```sh
-node generate.js
+npm start
 ```
 
 ## MQTT.Cool Compatibility Notes
