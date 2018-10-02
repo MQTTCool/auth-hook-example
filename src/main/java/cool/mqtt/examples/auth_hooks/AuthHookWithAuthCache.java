@@ -1,20 +1,17 @@
 /*
- * MQTT.Cool - http://www.lightstreamer.com
- * Authentication and Authorization Demo
+ * MQTT.Cool - http://www.lightstreamer.com Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package cool.mqtt.examples.auth_hooks;
 
@@ -38,361 +35,348 @@ import cool.mqtt.hooks.MqttSubscription;
  */
 public class AuthHookWithAuthCache implements MQTTCoolHook {
 
-    /** Map for sessionId-user pairs */
-    private final ConcurrentHashMap<String, String> sessionIdToUsers = new ConcurrentHashMap<>();
+  /** Map for sessionId-user pairs */
+  private final ConcurrentHashMap<String, String> sessionIdToUsers = new ConcurrentHashMap<>();
 
-    /** Authorization cache for the user */
-    private final Map<String, UserAuthorizations> authCache = new ConcurrentHashMap<>();
+  /** Authorization cache for the user */
+  private final Map<String, UserAuthorizations> authCache = new ConcurrentHashMap<>();
 
-    /** Dedicate thread pool to retrieve authorizations. You might want to limit its size. */
-    private ExecutorService AuthorizationsThreads = Executors.newCachedThreadPool();
+  /** Dedicate thread pool to retrieve authorizations. You might want to limit its size. */
+  private ExecutorService AuthorizationsThreads = Executors.newCachedThreadPool();
 
-    /** Authorization cache class */
-    private class UserAuthorizations {
+  /** Authorization cache class */
+  private class UserAuthorizations {
 
-        int connectionCount = 0;
+    int connectionCount = 0;
 
-        private Map<String, Map<String, AuthorizationResult>> authorizations;
+    private Map<String, Map<String, AuthorizationResult>> authorizations;
 
-        /*
-         * If we check for authorizations before they are filled, the request will be kept waiting
-         * by this CountDownLatch.
-         */
-        private CountDownLatch cacheWait = new CountDownLatch(1);
+    /*
+     * If we check for authorizations before they are filled, the request will be kept waiting by
+     * this CountDownLatch.
+     */
+    private CountDownLatch cacheWait = new CountDownLatch(1);
 
-        /**
-         * @return {@code true} if it is the first connection, {@code false} otherwise
-         */
-        synchronized boolean newConnection() {
-            connectionCount++;
-            return (connectionCount == 1);
-        }
-
-        /**
-         * @return {@code true} if it is the last connection, {@code false} otherwise
-         */
-        synchronized boolean endConnection() {
-            connectionCount--;
-            return (connectionCount == 0);
-        }
-
-        /**
-         * Saves the authorization map and releases the CountDownLatch: any request, waiting for
-         * this authorizations list, can now continue.
-         * We expect this method to be called only once (it is), safety controls are out of scope
-         * here.
-         *
-         * @param authorizations
-         *            the authorization map
-         */
-        void cacheAuthorizations(Map<String, Map<String, AuthorizationResult>> authorizations) {
-            this.authorizations = authorizations;
-            cacheWait.countDown();
-        }
-
-        /**
-         * Retrieves the authorizations map if already available, otherwise awaits.
-         *
-         * @return the authroizations map
-         */
-        Map<String, Map<String, AuthorizationResult>> getAuthorizations() {
-            try {
-                // We do not wait forever, we have to release the thread.
-                cacheWait.await(3, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                /* Ignore exception */
-            }
-            return this.authorizations;
-        }
+    /**
+     * @return {@code true} if it is the first connection, {@code false} otherwise
+     */
+    synchronized boolean newConnection() {
+      connectionCount++;
+      return (connectionCount == 1);
     }
 
-    @Override
-    public void init(File configDir) throws HookException {
-        // No specific initialization tasks to perform.
+    /**
+     * @return {@code true} if it is the last connection, {@code false} otherwise
+     */
+    synchronized boolean endConnection() {
+      connectionCount--;
+      return (connectionCount == 0);
     }
 
-    @Override
-    public MqttBrokerConfig resolveAlias(String alias) throws HookException {
-        // Actually never invoked.
-        return null;
+    /**
+     * Saves the authorization map and releases the CountDownLatch: any request, waiting for this
+     * authorizations list, can now continue. We expect this method to be called only once (it is),
+     * safety controls are out of scope here.
+     *
+     * @param authorizations the authorization map
+     */
+    void cacheAuthorizations(Map<String, Map<String, AuthorizationResult>> authorizations) {
+      this.authorizations = authorizations;
+      cacheWait.countDown();
     }
 
-    @Override
-    public boolean canOpenSession(String sessionId, String user, String password,
-        @SuppressWarnings("rawtypes") Map clientContext,
-        String clientPrincipal) throws HookException {
+    /**
+     * Retrieves the authorizations map if already available, otherwise awaits.
+     *
+     * @return the authroizations map
+     */
+    Map<String, Map<String, AuthorizationResult>> getAuthorizations() {
+      try {
+        // We do not wait forever, we have to release the thread.
+        cacheWait.await(3, TimeUnit.SECONDS);
+      } catch (InterruptedException e) {
+        /* Ignore exception */
+      }
+      return this.authorizations;
+    }
+  }
 
-        /*
-         * A user is connecting. We suppose the password works as an authentication token,
-         * generated by the webserver in response to a user/password login made by the client.
-         * Thus, we have to ask the same server (or a common backend like a memcached or a DB) if
-         * the received token is (still) valid.
-         * This demo does not actually perform the request, user/token pairs are hard-coded in the
-         * AuthorizationRequest class.
-         */
-        AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
-        if (!AuthorizationResult.OK.equals(result)) {
-            throw new HookException(result.getCode(),
-                "Unauthorized access: token invalid for user '" + user + "'");
-        }
+  @Override
+  public void init(File configDir) throws HookException {
+    // No specific initialization tasks to perform.
+  }
 
-        /*
-         * Since subsequent Hook calls will rely only on the sessionId, we store the user associated
-         * with this sessionId on an internal map.
-         */
-        sessionIdToUsers.put(sessionId, user);
+  @Override
+  public MqttBrokerConfig resolveAlias(String alias) throws HookException {
+    // Actually never invoked.
+    return null;
+  }
 
-        /*
-         * NOTE: as the canOpenSession call is blocking, a further blocking call you may need to
-         * perform the client lookup may require a proper configuration of the specific "SET" thread
-         * pool mqtt_master_connector_conf.xml file for MQTT.Cool.
-         * We could also speed up things using a local cache.
-         */
+  @Override
+  public boolean canOpenSession(String sessionId, String user, String password,
+      @SuppressWarnings("rawtypes") Map clientContext, String clientPrincipal)
+      throws HookException {
 
-        /*
-         * NOTE 2: it is common practice for a webserver to place its session token inside a cookie;
-         * if the cookie, the SDK for Web Client, and MQTT.Cool are properly configured, such cookie
-         * is available in the HTTP headers map, which can be obtained from the clientContext map
-         * with the "HTTP_HEADERS" key; you might be tempted to use it to authenticate the user:
-         * this approach is discouraged, please check the MQTT.Cool configuration file for the
-         * <use_protected_js> and <forward_cookies> documentation for further info about the topic.
-         */
-
-        /*
-         * We now verify if a cache containing his authorizations is already available and, if not,
-         * query the external service to create one.
-         */
-        UserAuthorizations userCache = null;
-        synchronized (authCache) {
-            userCache = authCache.get(user);
-            if (userCache == null) {
-                userCache = new UserAuthorizations();
-                authCache.put(user, userCache);
-            }
-        }
-
-        /*
-         * The cache object also counts the connections associated to the related user, so we inform
-         * it to count a new connection.
-         */
-        boolean isFirstConnection = userCache.newConnection();
-        if (isFirstConnection) {
-            /*
-             * If this is the first connection we have to query the service to retrieve the list of
-             * authorizations.
-             * We don't need it right away, thus it would be a pity to block the thread. So we will
-             * make the request to the service on a separate thread.
-             */
-            final String retrievedUser = user;
-            final UserAuthorizations retrievedUserCache = userCache;
-            AuthorizationsThreads.execute(new Runnable() {
-                public void run() {
-                    /*
-                     * In a real case, here we would call the service with a blocking call. In this
-                     * demo the authorization list is hard-coded in the AuthorizationRequest class,
-                     * the call will not block and will always work; in a real case you will
-                     * probably need a fallback mechanism to release the CountDownLatch in
-                     * UserAuthorization if the authorization mechanism fails or a timeout expires.
-                     */
-                    retrievedUserCache.cacheAuthorizations(
-                        AuthorizationRequest.getUserAuthorizations(retrievedUser));
-                }
-            });
-        }
-
-        return true;
+    /*
+     * A user is connecting. We suppose the password works as an authentication token, generated by
+     * the webserver in response to a user/password login made by the client. Thus, we have to ask
+     * the same server (or a common backend like a memcached or a DB) if the received token is
+     * (still) valid. This demo does not actually perform the request, user/token pairs are
+     * hard-coded in the AuthorizationRequest class.
+     */
+    AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
+    if (!AuthorizationResult.OK.equals(result)) {
+      throw new HookException(result.getCode(),
+          "Unauthorized access: token invalid for user '" + user + "'");
     }
 
-    @Override
-    public void onSessionClose(String sessionId) {
-        /*
-         * Once all the sessions for a certain user are closed we have to clean the cache,
-         * thus we have to keep count of how many connections a user has. We now first recover (and
-         * remove) the user associated with the session Id from our internal map.
-         */
-        String user = sessionIdToUsers.remove(sessionId);
-        if (user == null) {
-            return; // Should never happen
-        }
+    /*
+     * Since subsequent Hook calls will rely only on the sessionId, we store the user associated
+     * with this sessionId on an internal map.
+     */
+    sessionIdToUsers.put(sessionId, user);
 
-        /*
-         * Then we check his cache object to verify the number of active sessions.
-         * If this is the last one we simply destroy the cache.
-         */
-        synchronized (authCache) {
-            UserAuthorizations userCache = authCache.get(user);
-            if (userCache == null) {
-                return; // Should never happen
-            }
+    /*
+     * NOTE: as the canOpenSession call is blocking, a further blocking call you may need to perform
+     * the client lookup may require a proper configuration of the specific "SET" thread pool
+     * mqtt_master_connector_conf.xml file for MQTT.Cool. We could also speed up things using a
+     * local cache.
+     */
 
-            boolean isLastConnection = userCache.endConnection();
-            if (isLastConnection) {
-                authCache.remove(user);
-            }
-        }
+    /*
+     * NOTE 2: it is common practice for a webserver to place its session token inside a cookie; if
+     * the cookie, the SDK for Web Client, and MQTT.Cool are properly configured, such cookie is
+     * available in the HTTP headers map, which can be obtained from the clientContext map with the
+     * "HTTP_HEADERS" key; you might be tempted to use it to authenticate the user: this approach is
+     * discouraged, please check the MQTT.Cool configuration file for the <use_protected_js> and
+     * <forward_cookies> documentation for further info about the topic.
+     */
+
+    /*
+     * We now verify if a cache containing his authorizations is already available and, if not,
+     * query the external service to create one.
+     */
+    UserAuthorizations userCache = null;
+    synchronized (authCache) {
+      userCache = authCache.get(user);
+      if (userCache == null) {
+        userCache = new UserAuthorizations();
+        authCache.put(user, userCache);
+      }
     }
 
-    @Override
-    public boolean canConnect(String sessionId, String clientId, String brokerAddress,
-        MqttConnectOptions connectOptions) throws HookException {
-
-        /*
-         * A user is trying to connect to the specified MQTT broker, we have to verify if he is
-         * authorized to perform what it is asking for. To do this we first recover the user
-         * associated with the session Id from our internal map.
-         * This task might be performed by checking an external service or a local cache. If a
-         * service has to be queried, it is, in most cases, better to query it beforehand in the
-         * canOpenSession method. This class assumes such info has been cached somewhere else.
-         * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-         * step further and shows the cache-during-canOpenSession approach.
-         * In any case this demo does not actually perform the request, as user authorizations
-         * are hard-coded in the AuthorizationRequest class.
-         */
-        String user = sessionIdToUsers.get(sessionId);
-        if (user == null) {
-            return false; // Should never happen
+    /*
+     * The cache object also counts the connections associated to the related user, so we inform it
+     * to count a new connection.
+     */
+    boolean isFirstConnection = userCache.newConnection();
+    if (isFirstConnection) {
+      /*
+       * If this is the first connection we have to query the service to retrieve the list of
+       * authorizations. We don't need it right away, thus it would be a pity to block the thread.
+       * So we will make the request to the service on a separate thread.
+       */
+      final String retrievedUser = user;
+      final UserAuthorizations retrievedUserCache = userCache;
+      AuthorizationsThreads.execute(new Runnable() {
+        public void run() {
+          /*
+           * In a real case, here we would call the service with a blocking call. In this demo the
+           * authorization list is hard-coded in the AuthorizationRequest class, the call will not
+           * block and will always work; in a real case you will probably need a fallback mechanism
+           * to release the CountDownLatch in UserAuthorization if the authorization mechanism fails
+           * or a timeout expires.
+           */
+          retrievedUserCache
+              .cacheAuthorizations(AuthorizationRequest.getUserAuthorizations(retrievedUser));
         }
-
-        synchronized (authCache) {
-            UserAuthorizations userCache = authCache.get(user);
-            if (userCache == null) {
-                return false; // Should never happen
-            }
-
-            Map<String, Map<String, AuthorizationResult>> authorizations =
-                userCache.getAuthorizations();
-            if (authorizations == null) {
-                return false; // May happen if the authorization cache is taking too long to fill
-            }
-
-            // Retrieve the autorization results for connecting.
-            Map<String, AuthorizationResult> map = authorizations.get("connect");
-
-            // Check the cached authorization results.
-            AuthorizationResult result = map.get(brokerAddress);
-            if (!AuthorizationResult.OK.equals(result)) {
-                throw new HookException(
-                    result != null
-                        ? result.getCode()
-                        : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED.getCode(),
-                    "Unauthorized access: user '" + user + "' can't connect to broker '" +
-                        brokerAddress + "'");
-            }
-
-            return true;
-        }
+      });
     }
 
-    @Override
-    public boolean canPublish(String sessionId, String clientId, String brokerAddress,
-        MqttMessage message) throws HookException {
+    return true;
+  }
 
-        /*
-         * A user is trying to publish a message to a topic, we have to verify if he is authorized
-         * to perform what it is asking for. To do this we first recover the user associated with
-         * the session Id from our internal map.
-         * This task might be performed by checking an external service or a local cache. If a
-         * service has to be queried, it is, in most cases, better to query it beforehand in the
-         * canOpenSession method. This class assumes such info has been cached somewhere else.
-         * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-         * step further and shows the cache-during-canOpenSession approach.
-         * In any case this demo does not actually perform the request, as user authorizations
-         * are hard-coded in the AuthorizationRequest class.
-         */
-        String user = sessionIdToUsers.get(sessionId);
-        if (user == null) {
-            return false; // Should never happen
-        }
-
-        synchronized (authCache) {
-            UserAuthorizations userCache = authCache.get(user);
-            if (userCache == null) {
-                return false; // Should never happen
-            }
-
-            Map<String, Map<String, AuthorizationResult>> authorizations =
-                userCache.getAuthorizations();
-            if (authorizations == null) {
-                return false; // May happen if the authorization cache is taking too long to fill
-            }
-
-            // Retrieve the authorization results for publishing.
-            Map<String, AuthorizationResult> map = authorizations.get("publish");
-
-            // Check the cached authorization results.
-            AuthorizationResult result = map.get(message.getTopicName());
-            if (!AuthorizationResult.OK.equals(result)) {
-                throw new HookException(
-                    result != null
-                        ? result.getCode()
-                        : AuthorizationResult.PUBLISHING_NOT_ALLOWED.getCode(),
-                    String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
-                        user, message.getTopicName()));
-            }
-            return true;
-        }
-
+  @Override
+  public void onSessionClose(String sessionId) {
+    /*
+     * Once all the sessions for a certain user are closed we have to clean the cache, thus we have
+     * to keep count of how many connections a user has. We now first recover (and remove) the user
+     * associated with the session Id from our internal map.
+     */
+    String user = sessionIdToUsers.remove(sessionId);
+    if (user == null) {
+      return; // Should never happen
     }
 
-    @Override
-    public boolean canSubscribe(String sessionId, String clientId, String brokerAddress,
-        MqttSubscription subscription) throws HookException {
+    /*
+     * Then we check his cache object to verify the number of active sessions. If this is the last
+     * one we simply destroy the cache.
+     */
+    synchronized (authCache) {
+      UserAuthorizations userCache = authCache.get(user);
+      if (userCache == null) {
+        return; // Should never happen
+      }
 
-        /*
-         * A user is trying to subscribe to a topic, we have to verify if he is authorized to
-         * perform what he's asking for. To do this we first recover the user associated with the
-         * session id from our internal map.
-         * This task might be performed by checking an external service or a local cache. If a
-         * service has to be queried, it is, in most cases, better to query it beforehand in the
-         * canOpenSession method. This class assumes such info has been cached somewhere else.
-         * On the other hand, the AuthHookWithAuthCache class (available in this package) takes a
-         * step further and shows the cache-during-canOpenSession approach.
-         * In any case this demo does not actually perform the request, as user authorizations
-         * are hard-coded in the AuthorizationRequest class.
-         */
-        String user = sessionIdToUsers.get(sessionId);
-        if (user == null) {
-            return false; // Should never happen
-        }
+      boolean isLastConnection = userCache.endConnection();
+      if (isLastConnection) {
+        authCache.remove(user);
+      }
+    }
+  }
 
-        synchronized (authCache) {
-            UserAuthorizations userCache = authCache.get(user);
-            if (userCache == null) {
-                return false; // Should never happen
-            }
+  @Override
+  public boolean canConnect(String sessionId, String clientId, String brokerAddress,
+      MqttConnectOptions connectOptions) throws HookException {
 
-            Map<String, Map<String, AuthorizationResult>> authorizations =
-                userCache.getAuthorizations();
-            if (authorizations == null) {
-                return false; // May happen if the authorization cache is taking too long to fill
-            }
-
-            // Retrieve the authorization results for subscription.
-            Map<String, AuthorizationResult> map = authorizations.get("subscribe");
-
-            // Check the cached authorization results.
-            AuthorizationResult result = map.get(subscription.getTopicFilter());
-            if (!AuthorizationResult.OK.equals(result)) {
-                throw new HookException(
-                    result != null
-                        ? result.getCode()
-                        : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED.getCode(),
-                    String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
-                        user, subscription.getTopicFilter()));
-            }
-
-            return true;
-        }
+    /*
+     * A user is trying to connect to the specified MQTT broker, we have to verify if he is
+     * authorized to perform what it is asking for. To do this we first recover the user associated
+     * with the session Id from our internal map. This task might be performed by checking an
+     * external service or a local cache. If a service has to be queried, it is, in most cases,
+     * better to query it beforehand in the canOpenSession method. This class assumes such info has
+     * been cached somewhere else. On the other hand, the AuthHookWithAuthCache class (available in
+     * this package) takes a step further and shows the cache-during-canOpenSession approach. In any
+     * case this demo does not actually perform the request, as user authorizations are hard-coded
+     * in the AuthorizationRequest class.
+     */
+    String user = sessionIdToUsers.get(sessionId);
+    if (user == null) {
+      return false; // Should never happen
     }
 
-    @Override
-    public void onDisconnection(String sessionId, String clientId, String brokerAddress) {
-        // Nothing to do.
+    synchronized (authCache) {
+      UserAuthorizations userCache = authCache.get(user);
+      if (userCache == null) {
+        return false; // Should never happen
+      }
+
+      Map<String, Map<String, AuthorizationResult>> authorizations = userCache.getAuthorizations();
+      if (authorizations == null) {
+        return false; // May happen if the authorization cache is taking too long to fill
+      }
+
+      // Retrieve the autorization results for connecting.
+      Map<String, AuthorizationResult> map = authorizations.get("connect");
+
+      // Check the cached authorization results.
+      AuthorizationResult result = map.get(brokerAddress);
+      if (!AuthorizationResult.OK.equals(result)) {
+        throw new HookException(
+            result != null ? result.getCode()
+                : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED.getCode(),
+            "Unauthorized access: user '" + user + "' can't connect to broker '" + brokerAddress
+                + "'");
+      }
+
+      return true;
+    }
+  }
+
+  @Override
+  public boolean canPublish(String sessionId, String clientId, String brokerAddress,
+      MqttMessage message) throws HookException {
+
+    /*
+     * A user is trying to publish a message to a topic, we have to verify if he is authorized to
+     * perform what it is asking for. To do this we first recover the user associated with the
+     * session Id from our internal map. This task might be performed by checking an external
+     * service or a local cache. If a service has to be queried, it is, in most cases, better to
+     * query it beforehand in the canOpenSession method. This class assumes such info has been
+     * cached somewhere else. On the other hand, the AuthHookWithAuthCache class (available in this
+     * package) takes a step further and shows the cache-during-canOpenSession approach. In any case
+     * this demo does not actually perform the request, as user authorizations are hard-coded in the
+     * AuthorizationRequest class.
+     */
+    String user = sessionIdToUsers.get(sessionId);
+    if (user == null) {
+      return false; // Should never happen
     }
 
-    @Override
-    public void onUnsubscribe(String sessionId, String clientId, String brokerAddress,
-        String topicFilter) {
-        // Nothing to do.
+    synchronized (authCache) {
+      UserAuthorizations userCache = authCache.get(user);
+      if (userCache == null) {
+        return false; // Should never happen
+      }
+
+      Map<String, Map<String, AuthorizationResult>> authorizations = userCache.getAuthorizations();
+      if (authorizations == null) {
+        return false; // May happen if the authorization cache is taking too long to fill
+      }
+
+      // Retrieve the authorization results for publishing.
+      Map<String, AuthorizationResult> map = authorizations.get("publish");
+
+      // Check the cached authorization results.
+      AuthorizationResult result = map.get(message.getTopicName());
+      if (!AuthorizationResult.OK.equals(result)) {
+        throw new HookException(
+            result != null ? result.getCode()
+                : AuthorizationResult.PUBLISHING_NOT_ALLOWED.getCode(),
+            String.format("Unauthorized access: user '%s' can't publish messages to '%s'", user,
+                message.getTopicName()));
+      }
+      return true;
     }
+
+  }
+
+  @Override
+  public boolean canSubscribe(String sessionId, String clientId, String brokerAddress,
+      MqttSubscription subscription) throws HookException {
+
+    /*
+     * A user is trying to subscribe to a topic, we have to verify if he is authorized to perform
+     * what he's asking for. To do this we first recover the user associated with the session id
+     * from our internal map. This task might be performed by checking an external service or a
+     * local cache. If a service has to be queried, it is, in most cases, better to query it
+     * beforehand in the canOpenSession method. This class assumes such info has been cached
+     * somewhere else. On the other hand, the AuthHookWithAuthCache class (available in this
+     * package) takes a step further and shows the cache-during-canOpenSession approach. In any case
+     * this demo does not actually perform the request, as user authorizations are hard-coded in the
+     * AuthorizationRequest class.
+     */
+    String user = sessionIdToUsers.get(sessionId);
+    if (user == null) {
+      return false; // Should never happen
+    }
+
+    synchronized (authCache) {
+      UserAuthorizations userCache = authCache.get(user);
+      if (userCache == null) {
+        return false; // Should never happen
+      }
+
+      Map<String, Map<String, AuthorizationResult>> authorizations = userCache.getAuthorizations();
+      if (authorizations == null) {
+        return false; // May happen if the authorization cache is taking too long to fill
+      }
+
+      // Retrieve the authorization results for subscription.
+      Map<String, AuthorizationResult> map = authorizations.get("subscribe");
+
+      // Check the cached authorization results.
+      AuthorizationResult result = map.get(subscription.getTopicFilter());
+      if (!AuthorizationResult.OK.equals(result)) {
+        throw new HookException(
+            result != null ? result.getCode()
+                : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED.getCode(),
+            String.format("Unauthorized access: user '%s' can't receive messages from '%s'", user,
+                subscription.getTopicFilter()));
+      }
+
+      return true;
+    }
+  }
+
+  @Override
+  public void onDisconnection(String sessionId, String clientId, String brokerAddress) {
+    // Nothing to do.
+  }
+
+  @Override
+  public void onUnsubscribe(String sessionId, String clientId, String brokerAddress,
+      String topicFilter) {
+    // Nothing to do.
+  }
 }
