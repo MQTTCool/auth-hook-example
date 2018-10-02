@@ -5,7 +5,7 @@
 
   <groupId>cool.mqtt.examples.auth_hooks</groupId>
   <artifactId>demo-auth-hooks</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 
   <properties>
     <maven.compiler.source>1.7</maven.compiler.source>
