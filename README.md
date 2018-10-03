@@ -149,7 +149,7 @@ follows these steps.
 * As prerequisite, this demo needs an up and running MQTT broker. You can choose
 whatever MQTT broker you prefer, or may also use one of the available public
 broker (an up-to-date list is maintained at
-[https://github.com/mqtt/mqtt.github.io/wiki/public_brokers]()).
+[https://github.com/mqtt/mqtt.github.io/wiki/public_brokers](https://github.com/mqtt/mqtt.github.io/wiki/public_brokers)).
 * Download and configure an MQTT.Cool instance. Please refer to mqtt.cool web site
 [download page](https://mqtt.cool/download/latest-server) to find the MQTT.Cool
 package. MQTT.Cool comes with a set of predefined configurations for
