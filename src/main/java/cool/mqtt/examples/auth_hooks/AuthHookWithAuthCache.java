@@ -1,5 +1,7 @@
 /*
- * MQTT.Cool - http://www.lightstreamer.com Authentication and Authorization Demo
+ * MQTT.Cool - https://mqtt.cool
+ * 
+ * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
  *
@@ -15,20 +17,24 @@
  */
 package cool.mqtt.examples.auth_hooks;
 
+import static cool.mqtt.examples.auth_hooks.AuthorizationResult.OK;
+
+import cool.mqtt.hooks.HookException;
+import cool.mqtt.hooks.MQTTCoolHook;
+import cool.mqtt.hooks.MqttBrokerConfig;
+import cool.mqtt.hooks.MqttConnectOptions;
+import cool.mqtt.hooks.MqttMessage;
+import cool.mqtt.hooks.MqttSubscription;
+
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import cool.mqtt.hooks.HookException;
-import cool.mqtt.hooks.MqttBrokerConfig;
-import cool.mqtt.hooks.MqttConnectOptions;
-import cool.mqtt.hooks.MQTTCoolHook;
-import cool.mqtt.hooks.MqttMessage;
-import cool.mqtt.hooks.MqttSubscription;
 
 /**
  * Alternative Hook class for authorization checks, implementing a local cache.
@@ -39,10 +45,12 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
   private final ConcurrentHashMap<String, String> sessionIdToUsers = new ConcurrentHashMap<>();
 
   /** Authorization cache for the user */
-  private final Map<String, UserAuthorizations> authCache = new ConcurrentHashMap<>();
+  private final Map<String, UserAuthorizations> authCache = new HashMap<>();
 
   /** Dedicate thread pool to retrieve authorizations. You might want to limit its size. */
-  private ExecutorService AuthorizationsThreads = Executors.newCachedThreadPool();
+  private ExecutorService authorizationsThreads = Executors.newCachedThreadPool();
+
+  private AuthorizationHandler authorizationHandler;
 
   /** Authorization cache class */
   private class UserAuthorizations {
@@ -88,7 +96,7 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
     /**
      * Retrieves the authorizations map if already available, otherwise awaits.
      *
-     * @return the authroizations map
+     * @return the authorizations map
      */
     Map<String, Map<String, AuthorizationResult>> getAuthorizations() {
       try {
@@ -97,13 +105,15 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
       } catch (InterruptedException e) {
         /* Ignore exception */
       }
-      return this.authorizations;
+      return authorizations;
     }
   }
 
   @Override
   public void init(File configDir) throws HookException {
-    // No specific initialization tasks to perform.
+    Configuration configuration = new Configuration(configDir);
+    Set<String> brokerAddresses = configuration.retrieveBrokerAddresses();
+    authorizationHandler = new AuthorizationHandler(brokerAddresses);
   }
 
   @Override
@@ -124,8 +134,8 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
      * (still) valid. This demo does not actually perform the request, user/token pairs are
      * hard-coded in the AuthorizationRequest class.
      */
-    AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
-    if (!AuthorizationResult.OK.equals(result)) {
+    AuthorizationResult result = authorizationHandler.validateToken(user, password);
+    if (!OK.equals(result)) {
       throw new HookException(result.getCode(),
           "Unauthorized access: token invalid for user '" + user + "'");
     }
@@ -156,7 +166,7 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
      * We now verify if a cache containing his authorizations is already available and, if not,
      * query the external service to create one.
      */
-    UserAuthorizations userCache = null;
+    UserAuthorizations userCache;
     synchronized (authCache) {
       userCache = authCache.get(user);
       if (userCache == null) {
@@ -176,20 +186,16 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
        * authorizations. We don't need it right away, thus it would be a pity to block the thread.
        * So we will make the request to the service on a separate thread.
        */
-      final String retrievedUser = user;
-      final UserAuthorizations retrievedUserCache = userCache;
-      AuthorizationsThreads.execute(new Runnable() {
-        public void run() {
-          /*
-           * In a real case, here we would call the service with a blocking call. In this demo the
-           * authorization list is hard-coded in the AuthorizationRequest class, the call will not
-           * block and will always work; in a real case you will probably need a fallback mechanism
-           * to release the CountDownLatch in UserAuthorization if the authorization mechanism fails
-           * or a timeout expires.
-           */
-          retrievedUserCache
-              .cacheAuthorizations(AuthorizationRequest.getUserAuthorizations(retrievedUser));
-        }
+      UserAuthorizations retrievedUserCache = userCache;
+      authorizationsThreads.execute(() -> {
+        /*
+         * In a real case, here we would call the service with a blocking call. In this demo the
+         * authorization list is hard-coded in the AuthorizationRequest class, the call will not
+         * block and will always work; in a real case you will probably need a fallback mechanism to
+         * release the CountDownLatch in UserAuthorization if the authorization mechanism fails or a
+         * timeout expires.
+         */
+        retrievedUserCache.cacheAuthorizations(authorizationHandler.getUserAuthorizations(user));
       });
     }
 
@@ -256,17 +262,14 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
         return false; // May happen if the authorization cache is taking too long to fill
       }
 
-      // Retrieve the autorization results for connecting.
+      // Retrieve the authorization results for connecting.
       Map<String, AuthorizationResult> map = authorizations.get("connect");
 
       // Check the cached authorization results.
       AuthorizationResult result = map.get(brokerAddress);
-      if (!AuthorizationResult.OK.equals(result)) {
-        throw new HookException(
-            result != null ? result.getCode()
-                : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED.getCode(),
-            "Unauthorized access: user '" + user + "' can't connect to broker '" + brokerAddress
-                + "'");
+      if (!OK.equals(result)) {
+        throw new HookException(result.getCode(), String.format(
+            "Unauthorized access: user '%s' can't connect to broker '%s'", user, brokerAddress));
       }
 
       return true;
@@ -309,10 +312,8 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
 
       // Check the cached authorization results.
       AuthorizationResult result = map.get(message.getTopicName());
-      if (!AuthorizationResult.OK.equals(result)) {
-        throw new HookException(
-            result != null ? result.getCode()
-                : AuthorizationResult.PUBLISHING_NOT_ALLOWED.getCode(),
+      if (!OK.equals(result)) {
+        throw new HookException(result.getCode(),
             String.format("Unauthorized access: user '%s' can't publish messages to '%s'", user,
                 message.getTopicName()));
       }
@@ -357,10 +358,8 @@ public class AuthHookWithAuthCache implements MQTTCoolHook {
 
       // Check the cached authorization results.
       AuthorizationResult result = map.get(subscription.getTopicFilter());
-      if (!AuthorizationResult.OK.equals(result)) {
-        throw new HookException(
-            result != null ? result.getCode()
-                : AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED.getCode(),
+      if (!OK.equals(result)) {
+        throw new HookException(result.getCode(),
             String.format("Unauthorized access: user '%s' can't receive messages from '%s'", user,
                 subscription.getTopicFilter()));
       }

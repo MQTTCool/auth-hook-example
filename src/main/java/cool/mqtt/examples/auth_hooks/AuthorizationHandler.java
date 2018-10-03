@@ -1,5 +1,7 @@
 /*
- * MQTT.Cool - http://www.lightstreamer.com Authentication and Authorization Demo
+ * MQTT.Cool - https://mqtt.cool
+ * 
+ * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
  *
@@ -15,78 +17,91 @@
  */
 package cool.mqtt.examples.auth_hooks;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Handles authorization requests issued by the user.
  */
-class AuthorizationRequest {
+class AuthorizationHandler {
 
   /** User-token map, shared with the demo client. */
-  private static final ConcurrentHashMap<String, String> TOKENS = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, String> tokens = new ConcurrentHashMap<>();
 
-  // Initialize the user-token map
-  static {
-    TOKENS.put("user1", "ikgdfigdfhihdsih");
-    TOKENS.put("user2", "slaoejkauekalkew");
-    TOKENS.put("patient0", "lookihaveanewtokenhere");
-    TOKENS.put("leto", "powerfultoken");
-    TOKENS.put("gollum", "toobadforyou");
-    TOKENS.put("lucky", "srsly");
-  }
-
-  /** URI of the allowed MQTT broker to connect to. You might want to change it. */
-  private static final String ALLOWED_BROKER = "tcp://localhost:1883";
+  /** Set of URIs of the allowed MQTT brokers to connect to. */
+  private final Set<String> allowedBrokers;
 
   /**
-   * List of user-authorization pairs, shared with the demo client (the client simply shows these
-   * infos in the interface, does not directly use them).
+   * User-authorization map, shared with the demo client (the client simply shows these infos in the
+   * interface, does not directly use them).
    */
-  private static final ConcurrentHashMap<String, PermissionInfo> AUTHORIZATIONS =
-      new ConcurrentHashMap<>();
+  private Map<String, PermissionInfo> authorizations;
 
-  // Initialize authorizations for each user.
-  static {
+  public AuthorizationHandler(Set<String> allowedBrokers) {
+    this.allowedBrokers = Collections.unmodifiableSet(allowedBrokers);
+    initUserTokenMap();
+    initAuthorizations();
+  }
+
+  private void initUserTokenMap() {
+    tokens.put("user1", "ikgdfigdfhihdsih");
+    tokens.put("user2", "slaoejkauekalkew");
+    tokens.put("patient0", "lookihaveanewtokenhere");
+    tokens.put("leto", "powerfultoken");
+    tokens.put("gollum", "toobadforyou");
+    tokens.put("lucky", "srsly");
+  }
+
+  private void initAuthorizations() {
+    Map<String, PermissionInfo> userAuthorizations = new HashMap<>();
+
     // Authorizations for user "user1":
     PermissionInfo user1Auth =
-        new DefaultPermissionInfo.AuthorizationBuilder().withBroker(ALLOWED_BROKER)
+        new DefaultPermissionInfo.AuthorizationBuilder().withBrokers(allowedBrokers)
             .withSubscribeTo("topics/topic_1").withSubscribeTo("topics/topic_2")
             .withSubscribeTo("topics/topic_3").withPublishingTo("topics/topic_4")
             .withPublishingTo("topics/topic_5").withPublishingTo("topics/topic_6").build();
-    AUTHORIZATIONS.put("user1", user1Auth);
+    userAuthorizations.put("user1", user1Auth);
 
     /*
      * Authorizations for user "user2", which will be able to open a session but not to connect to
      * the MQTT broker.
      */
     PermissionInfo user2Auth = new DefaultPermissionInfo.AuthorizationBuilder().build();
-    AUTHORIZATIONS.put("user2", user2Auth);
+    userAuthorizations.put("user2", user2Auth);
 
     // Authorizations for user "patient0", which will never be able to open a new session.
 
     // Authorizations for user "leto", which will be able to authorized to do everything.
     PermissionInfo letoAuth = DefaultPermissionInfo.AuthorizationBuilder.ALL;
-    AUTHORIZATIONS.put("leto", letoAuth);
+    userAuthorizations.put("leto", letoAuth);
 
-    // Authorizations for user "gollum", which will only be able to connect to the MQTT broker.
+    // Authorizations for user "gollum", which will only be able to connect to the MQTT brokers.
     PermissionInfo gollumAuth =
-        new DefaultPermissionInfo.AuthorizationBuilder().withBroker(ALLOWED_BROKER).build();
-    AUTHORIZATIONS.put("gollum", gollumAuth);
+        new DefaultPermissionInfo.AuthorizationBuilder().withBrokers(allowedBrokers).build();
+    userAuthorizations.put("gollum", gollumAuth);
 
     // Authorizations for user "lucky":
     PermissionInfo lucyAuth =
-        new DefaultPermissionInfo.AuthorizationBuilder().withBroker(ALLOWED_BROKER)
+        new DefaultPermissionInfo.AuthorizationBuilder().withBrokers(allowedBrokers)
             .withPublishingTo("topics/topic_13").withPublishingTo("topics/topic_17").build();
-    AUTHORIZATIONS.put("lucky", lucyAuth);
+    userAuthorizations.put("lucky", lucyAuth);
+
+    authorizations = Collections.unmodifiableMap(userAuthorizations);
   }
 
-  public static AuthorizationResult validateToken(String user, String token) {
+  public AuthorizationResult validateToken(String user, String token) {
     /*
      * In a real case, the application would lookup the user-token pair on an external service (or a
      * local cache); in this demo we simply lookup the hard-coded map.
      */
-    String correctToken = TOKENS.get(user);
+    String correctToken = tokens.get(user);
     if ((correctToken != null) && correctToken.equals(token)) {
       return AuthorizationResult.OK;
     }
@@ -95,12 +110,12 @@ class AuthorizationRequest {
     return AuthorizationResult.INVALID_TOKEN;
   }
 
-  public static AuthorizationResult authorizeMQTTConnection(String user, String broker) {
+  public AuthorizationResult authorizeMQTTConnection(String user, String broker) {
     /*
      * In a real case, the application would lookup the user authorizations on an external service
      * (or a local cache); in this demo we simply lookup the hard-coded map.
      */
-    PermissionInfo authorizationInfo = AUTHORIZATIONS.get(user);
+    PermissionInfo authorizationInfo = authorizations.get(user);
     if ((authorizationInfo != null) && authorizationInfo.allowConnectionTo(broker)) {
       return AuthorizationResult.OK;
     }
@@ -109,12 +124,12 @@ class AuthorizationRequest {
     return AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED;
   }
 
-  public static AuthorizationResult authorizePublishTo(String user, String topic) {
+  public AuthorizationResult authorizePublishTo(String user, String topic) {
     /*
      * In a real case, the application would lookup the user authorizations on an external service
      * (or a local cache); in this demo we simply lookup the hard-coded map.
      */
-    PermissionInfo permissioInfo = AUTHORIZATIONS.get(user);
+    PermissionInfo permissioInfo = authorizations.get(user);
     if ((permissioInfo != null) && permissioInfo.allowPublishTo(topic)) {
       return AuthorizationResult.OK;
     }
@@ -123,12 +138,12 @@ class AuthorizationRequest {
     return AuthorizationResult.PUBLISHING_NOT_ALLOWED;
   }
 
-  public static AuthorizationResult authorizeSubscribeTo(String user, String topicFilter) {
+  public AuthorizationResult authorizeSubscribeTo(String user, String topicFilter) {
     /*
      * In a real case, the application would lookup the user authorizations on an external service
      * (or a local cache); in this demo we simply lookup the hard-coded map.
      */
-    PermissionInfo permissionInfo = AUTHORIZATIONS.get(user);
+    PermissionInfo permissionInfo = authorizations.get(user);
     if ((permissionInfo != null) && permissionInfo.allowSubscribeTo(topicFilter)) {
       return AuthorizationResult.OK;
     }
@@ -136,20 +151,23 @@ class AuthorizationRequest {
     return AuthorizationResult.SUBSCRIPTION_NOT_ALLOWED;
   }
 
-  public static Map<String, Map<String, AuthorizationResult>> getUserAuthorizations(String user) {
+  public Map<String, Map<String, AuthorizationResult>> getUserAuthorizations(String user) {
     /*
      * In a real case, the application would lookup the user authorizations on an external service
      * (or a local cache); in this demo we simply preload a map with the possible authorization
      * results from the hard-coded map.
      */
-    PermissionInfo permissionInfos = AUTHORIZATIONS.get(user);
+    PermissionInfo permissionInfos = authorizations.get(user);
+
+    ConcurrentMap<String, AuthorizationResult> connectResults = allowedBrokers.stream()
+        .collect(Collectors.toConcurrentMap(Function.identity(), brokerAddress -> {
+          AuthorizationResult connectionResult =
+              permissionInfos.allowConnectionTo(brokerAddress) ? AuthorizationResult.OK
+                  : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED;
+          return connectionResult;
+        }));
 
     Map<String, Map<String, AuthorizationResult>> results = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String, AuthorizationResult> connectResults = new ConcurrentHashMap<>();
-    AuthorizationResult connectionResult =
-        permissionInfos.allowConnectionTo(ALLOWED_BROKER) ? AuthorizationResult.OK
-            : AuthorizationResult.BROKER_CONNECTION_NOT_ALLOWED;
-    connectResults.put(ALLOWED_BROKER, connectionResult);
     results.put("connect", connectResults);
 
     Map<String, AuthorizationResult> subscribeResults = new ConcurrentHashMap<>();

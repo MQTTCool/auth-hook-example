@@ -1,5 +1,7 @@
 /*
- * MQTT.Cool - http://www.lightstreamer.com Authentication and Authorization Demo
+ * MQTT.Cool - https://mqtt.cool
+ * 
+ * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
  *
@@ -106,6 +108,17 @@ class DefaultPermissionInfo implements PermissionInfo {
      */
     public AuthorizationBuilder withBroker(String broker) {
       contactableBrokers.add(broker);
+      return this;
+    }
+
+    /**
+     * Grant the permission to connect to the specified MQTT broker addresses.
+     *
+     * @param set containing the MQTT broker addresses to connect to
+     * @return a reference to this object
+     */
+    public AuthorizationBuilder withBrokers(Set<String> brokers) {
+      contactableBrokers.addAll(brokers);
       return this;
     }
 

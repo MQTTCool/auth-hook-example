@@ -1,17 +1,23 @@
 /*
- * MQTT.Cool - http://www.lightstreamer.com Authentication and Authorization Demo Copyright (c)
- * Lightstreamer Srl Licensed under the Apache License, Version 2.0 (the "License"); you may not use
- * this file except in compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
- * writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
+ * MQTT.Cool - https://mqtt.cool
+ * 
+ * Authentication and Authorization Demo
+ * 
+ * Copyright (c) Lightstreamer Srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package cool.mqtt.examples.auth_hooks;
 
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import static cool.mqtt.examples.auth_hooks.AuthorizationResult.OK;
 
 import cool.mqtt.hooks.HookException;
 import cool.mqtt.hooks.MQTTCoolHook;
@@ -19,6 +25,11 @@ import cool.mqtt.hooks.MqttBrokerConfig;
 import cool.mqtt.hooks.MqttConnectOptions;
 import cool.mqtt.hooks.MqttMessage;
 import cool.mqtt.hooks.MqttSubscription;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Hook class for authorization checks.
@@ -28,12 +39,15 @@ public class AuthHook implements MQTTCoolHook {
   /** Map for sessionId-user pairs */
   private final ConcurrentHashMap<String, String> sessionIdToUsers = new ConcurrentHashMap<>();
 
-  @Override
-  public void init(File configDir) throws HookException {
-    // No specific initialization tasks to perform.
-  }
+  private AuthorizationHandler authorizationHandler;
 
   @Override
+  public void init(File configDir) throws HookException {
+    Configuration configuration = new Configuration(configDir);
+    Set<String> brokerAddresses = configuration.retrieveBrokerAddresses();
+    authorizationHandler = new AuthorizationHandler(brokerAddresses);
+  }
+
   public MqttBrokerConfig resolveAlias(String alias) throws HookException {
     // Actually never invoked.
     return null;
@@ -51,8 +65,8 @@ public class AuthHook implements MQTTCoolHook {
      * (still) valid. This demo does not actually perform the request, user/token pairs are
      * hard-coded in the AuthorizationRequest class.
      */
-    AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
-    if (!AuthorizationResult.OK.equals(result)) {
+    AuthorizationResult result = authorizationHandler.validateToken(user, password);
+    if (!OK.equals(result)) {
       throw new HookException(result.getCode(),
           "Unauthorized access: token invalid for user '" + user + "'");
     }
@@ -110,10 +124,10 @@ public class AuthHook implements MQTTCoolHook {
       return false; // Should never happen
     }
 
-    AuthorizationResult result = AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
-    if (!AuthorizationResult.OK.equals(result)) {
-      throw new HookException(result.getCode(), "Unauthorized access: user '" + user
-          + "' can't connect to broker '" + brokerAddress + "'");
+    AuthorizationResult result = authorizationHandler.authorizeMQTTConnection(user, brokerAddress);
+    if (!OK.equals(result)) {
+      throw new HookException(result.getCode(), String.format(
+          "Unauthorized access: user '%s' can't connect to broker '%s'", user, brokerAddress));
     }
 
     return true;
@@ -140,8 +154,8 @@ public class AuthHook implements MQTTCoolHook {
     }
 
     AuthorizationResult result =
-        AuthorizationRequest.authorizePublishTo(user, message.getTopicName());
-    if (!AuthorizationResult.OK.equals(result)) {
+        authorizationHandler.authorizePublishTo(user, message.getTopicName());
+    if (!OK.equals(result)) {
       throw new HookException(result.getCode(),
           String.format("Unauthorized access: user '%s' can't publish messages to '%s'", user,
               message.getTopicName()));
@@ -171,8 +185,8 @@ public class AuthHook implements MQTTCoolHook {
     }
 
     AuthorizationResult result =
-        AuthorizationRequest.authorizeSubscribeTo(user, subscription.getTopicFilter());
-    if (!AuthorizationResult.OK.equals(result)) {
+        authorizationHandler.authorizeSubscribeTo(user, subscription.getTopicFilter());
+    if (!OK.equals(result)) {
       throw new HookException(result.getCode(),
           String.format("Unauthorized access: user '%s' can't receive messages from '%s'", user,
               subscription.getTopicFilter()));
@@ -191,5 +205,9 @@ public class AuthHook implements MQTTCoolHook {
       String topicFilter) {
 
     // Nothing to do.
+  }
+
+  public static void main(String[] args) throws HookException {
+    new AuthHook().init(new File("."));
   }
 }

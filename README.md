@@ -57,7 +57,7 @@ from `src/java/main/cool/mqtt/examples/auth_hooks/AuthHook.java`:
 ```java
 [...]
 
-AuthorizationResult result = AuthorizationRequest.validateToken(user, password);
+AuthorizationResult result = authorizationHandler.validateToken(user, password);
 if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException(result.getCode(),
         "Unauthorized access: token invalid for user '" + user + "'");
@@ -98,17 +98,18 @@ from `src/java/main/cool/mqtt/examples/auth_hooks/AuthHook.java`:
 ```java
 [...]
 
- AuthorizationResult result =
-     AuthorizationRequest.authorizeMQTTConnection(user, brokerAddress);
+AuthorizationResult result =
+    authorizationHandler.authorizeMQTTConnection(user, brokerAddress);
 if (!AuthorizationResult.OK.equals(result)) {
-    throw new HookException(result.getCode(), "Unauthorized access: user '" + user +
-        "' can't connect to broker '" + brokerAddress + "'");
+    throw new HookException(result.getCode(),
+        String.format("Unauthorized access: user '%s' can't connect to broker '%s'",
+            user, brokerAddress));
 }
 
 [...]
 
 AuthorizationResult result =
-    AuthorizationRequest.authorizeSubscribeTo(user, subscription.getTopicFilter());
+    authorizationHandler.authorizeSubscribeTo(user, subscription.getTopicFilter());
 if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException(result.getCode(),
         String.format("Unauthorized access: user '%s' can't receive messages from '%s'",
@@ -118,11 +119,11 @@ if (!AuthorizationResult.OK.equals(result)) {
 [...]
 
 AuthorizationResult result =
-    AuthorizationRequest.authorizePublishTo(user, message.getTopicName());
+    authorizationHandler.authorizePublishTo(user, message.getTopicName());
 if (!AuthorizationResult.OK.equals(result)) {
     throw new HookException(result.getCode(),
-        String.format("Unauthorized access: user '%s' can't publish messages to '%s'", user,
-            message.getTopicName()));
+        String.format("Unauthorized access: user '%s' can't publish messages to '%s'",
+            user, message.getTopicName()));
 }
 
 [...]
@@ -149,9 +150,9 @@ follows these steps.
 whatever MQTT broker you prefer, or may also use one of the available public
 broker (an up-to-date list is maintained at
 [https://github.com/mqtt/mqtt.github.io/wiki/public_brokers]()).
-* Configure an MQTT.Cool instance. Please refer to Lightstreamer web site
-[download page](http://download.lightstreamer.com/) to find the MQTT.Cool
-download package. MQTT.Cool comes with a set of predefined configurations for
+* Download and configure an MQTT.Cool instance. Please refer to mqtt.cool web site
+[download page](https://mqtt.cool/download/latest-server) to find the MQTT.Cool
+package. MQTT.Cool comes with a set of predefined configurations for
 connecting with local MQTT server instances, as well as with the most common
 publicly accessible brokers. If you want to provide a new custom configuration,
 open the `mqtt_master_connector_conf.xml` file located under
@@ -190,8 +191,6 @@ information on how to configure broker connection parameters):
 * Download this project.
 * As the lastest version of the MQTT.Cool JavaScript library is always available
 through [`unpkg`](https://unpkg.com/#/), it is hot-linked in the html page.
-* RequireJS is currently hot-linked in the html page: you may want to replace it
-with a local version and/or to upgrade its version.
 * jQuery is currently hot-linked in the html page: you may want to replace it
 with a local version and/or to upgrade its version.
 * Deploy this demo on MQTT.Cool (used as Web server) or in any external Web
@@ -207,7 +206,7 @@ contents of `src/web` of this project.
 
 ## Build
 
-To build your own version of `demo-auth-hooks-1.0.0.jar`, instead of using the one
+To build your own version of `demo-auth-hooks-1.1.0.jar`, instead of using the one
 provided in the `deploy.zip` file from the [Install](#install) section above,
 follow these steps:
 
@@ -224,11 +223,11 @@ $ mvn package
 ## Configure
 
 The demo assumes that the MQTT.Cool server is launched from localhost, but if
-you need to target a different server, search in `src/web/js/app/Constants.js`
+you need to target a different server, search in `src/web/js/app/Main.js`
 this line:
 
 ```js
-var SERVER_ADDRESS = 'localhost:8080';
+SERVER_ADDRESS: 'http://localhost:8080',
 ```
 
 and change it accordingly.
@@ -240,7 +239,7 @@ parameters are already defined as shown above, modify the following line in
 `src/web/js/app/Main.js`:
 
 ```js
-var mqttClient = mqttCoolSession.createClient('mosquitto');
+mqttClient = mqttCoolSession.createClient('mosquitto');
 ```
 
 and change it by replacing **mosquitto** with the new alias that maps the MQTT
@@ -263,5 +262,5 @@ npm start
 
 * Compatible with MQTT.Cool SDK for Web Clients version 1.0.0 or newer.
 * Compatible with MQTT.Cool SDK for Java Hooks version 1.0.0 or newer.
-* Compatible with MQTT.Cool since version 1.0.3 b1 or newer.
+* Compatible with MQTT.Cool since version 1.1.0 or newer.
 
