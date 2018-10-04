@@ -170,7 +170,7 @@ information on how to configure broker connection parameters):
   ...
   ```
   - Get the `deploy.zip` file from the releases of this project, unzip it and
-    copy the `demo-auth-hooks-1.0.0.jar` from `lib` into
+    copy the `demo-auth-hooks-1.1.0.jar` from `lib` into
     `<MQTT.COOL_HOME>/mqtt_connector/lib`.
   - As the project contains two different Hook implementations,
     `cool.mqtt.examples.auth_hooks.AuthHook` and
@@ -255,8 +255,10 @@ the project.
 From the `feed` folder, run the feed application to publish random messages:
 
 ```sh
-npm start
+npm start <url_broker>
 ```
+
+where `url_broker` is the url of the MQTT broker relative to the alias in use.
 
 ## MQTT.Cool Compatibility Notes
 
