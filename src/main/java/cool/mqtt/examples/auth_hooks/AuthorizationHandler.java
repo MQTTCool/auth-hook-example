@@ -101,7 +101,7 @@ class AuthorizationHandler {
     userAuthorizations.put("demouser", demouserAuth);
 
     // As last note, user "patient0" will never be able to open a new session, therefore
-    // there is no need to specify PerimissionInfo.
+    // there is no need to specify any PerimissionInfo.
 
     authorizations = Collections.unmodifiableMap(userAuthorizations);
   }
