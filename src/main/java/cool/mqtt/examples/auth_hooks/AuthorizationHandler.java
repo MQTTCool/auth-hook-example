@@ -50,6 +50,11 @@ class AuthorizationHandler {
   }
 
   private void initUserTokenMap() {
+    // To be used from all other live demos, as this Hook is deployed into
+    // "https://cloud.mqtt.cool".
+    tokens.put("demouser", "");
+
+    // Expected users from the "Authentication and Authorization" demo client.
     tokens.put("user1", "ikgdfigdfhihdsih");
     tokens.put("user2", "slaoejkauekalkew");
     tokens.put("patient0", "lookihaveanewtokenhere");
@@ -76,8 +81,6 @@ class AuthorizationHandler {
     PermissionInfo user2Auth = new DefaultPermissionInfo.AuthorizationBuilder().build();
     userAuthorizations.put("user2", user2Auth);
 
-    // Authorizations for user "patient0", which will never be able to open a new session.
-
     // Authorizations for user "leto", which will be able to authorized to do everything.
     PermissionInfo letoAuth = DefaultPermissionInfo.AuthorizationBuilder.ALL;
     userAuthorizations.put("leto", letoAuth);
@@ -92,6 +95,13 @@ class AuthorizationHandler {
         new DefaultPermissionInfo.AuthorizationBuilder().withBrokers(allowedBrokers)
             .withPublishingTo("topics/topic_13").withPublishingTo("topics/topic_17").build();
     userAuthorizations.put("lucky", lucyAuth);
+
+    // Authorizations for user "demouser", used for all other live demos.
+    PermissionInfo demouserAuth = DefaultPermissionInfo.AuthorizationBuilder.ALL;
+    userAuthorizations.put("demouser", demouserAuth);
+
+    // As last note, user "patient0" will never be able to open a new session, therefore
+    // there is no need to specify PerimissionInfo.
 
     authorizations = Collections.unmodifiableMap(userAuthorizations);
   }
