@@ -20,10 +20,18 @@
 var mqtt = require('mqtt');
 
 // Connect to the MQTT broker listening at localhost on port 1883.
-var client = mqtt.connect('mqtt://localhost:1883');
+var urlBroker = process.argv[2];
+if (!urlBroker) {
+  console.warn('Please specify a valid URL broker');
+  process.exit(1);
+}
+
+console.info('Connecting to ' + urlBroker + ' ...');
+var client = mqtt.connect(urlBroker);
 
 // Upon successful connection, start simulation.
 client.on('connect', function() {
+  console.info('Connected to ' + urlBroker);
 
   // Publish a random message every 500 ms.
   setInterval(function() {
@@ -32,10 +40,17 @@ client.on('connect', function() {
       var topic = 'topics/topic_' + i;
 
       // Prepare a random payload.
-      var message = Math.random().toString(36).substring(2,9);
+      var message = Math.random().toString(36).substring(2, 9);
 
       // Send the message.
-      client.publish(topic, message);
+      client.publish(topic, message, function() {
+        console.info('Published message [' + message + '] to <' + topic + '>');
+      });
     }
   }, 500);
+});
+
+client.on('offline', function() {
+  console.warn('Client offline, exiting');
+  process.exit(1);
 });
