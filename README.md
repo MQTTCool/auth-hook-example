@@ -7,7 +7,9 @@ illustrating *authentication* and *authorization* mechanisms when an
 This project includes simple web client front-end example and hook
 implementation, which supplies user validation and authorization logics.
 
-![screenshot](screen-large.png)
+## Live Demo
+
+[![Live Demo](screen-large.png)](https://demos.mqtt.cool/auth-hook/index.html)
 
 ## Details
 
