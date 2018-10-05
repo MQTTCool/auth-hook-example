@@ -1,5 +1,6 @@
 /*
-  MQTT.Cool - http://www.lightstreamer.com
+  MQTT.Cool - https://mqtt.cool
+
   Authentication and Authorization Demo
 
   Copyright (c) Lightstreamer Srl
@@ -19,7 +20,7 @@
 
 var mqtt = require('mqtt');
 
-// Connect to the MQTT broker listening at localhost on port 1883.
+// Connect to the MQTT broker passed via cmd line.
 var urlBroker = process.argv[2];
 if (!urlBroker) {
   console.warn('Please specify a valid URL broker');
