@@ -260,6 +260,10 @@ npm start <url_broker>
 
 where `url_broker` is the url of the MQTT broker relative to the alias in use.
 
+## See Also
+
+* [Check out all other demos on MQTT.Cool site](https://mqtt.cool/demos)
+
 ## MQTT.Cool Compatibility Notes
 
 * Compatible with MQTT.Cool SDK for Web Clients version 1.0.0 or newer.

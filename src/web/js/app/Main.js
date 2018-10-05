@@ -1,7 +1,7 @@
 /*
  * MQTT.Cool - https://mqtt.cool
  *
- * Authentication and Authorization
+ * Authentication and Authorization Demo
  *
  * Demo Copyright (c) Lightstreamer Srl Licensed under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except in compliance
@@ -23,7 +23,7 @@
 
 const Constants = {
   // Target MQTT.Cool address. Change it with if required.
-  SERVER_ADDRESS: 'http://localhost:8080',
+  MQTT_COOL_URL: 'http://localhost:8080',
 
   // Topics configuration
   TOPIC_PREFIX: 'topics/topic_',
@@ -103,7 +103,7 @@ $(function() {
         } else {
           // Now it is possible to connect to MQTT.Cool, by sending the
           // token, not the password.
-          mqttcool.openSession(Constants.SERVER_ADDRESS, user, token, {
+          mqttcool.openSession(Constants.MQTT_COOL_URL, user, token, {
             // Intercept potential errors on the MQTT.Cool Server, e.g.: the
             // token expired while connecting.
             onConnectionFailure: function(errorType, responseObj) {
