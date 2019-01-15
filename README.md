@@ -1,6 +1,6 @@
-# MQTT.Cool - Authentication and Authorization Demo - Java Hook
+#  Authentication and Authorization Demo - Java Hook
 
-The **MQTT.Cool Authentication and Authorization Demo** is a simple example
+The **Authentication and Authorization Demo** is a simple example
 illustrating *authentication* and *authorization* mechanisms when an
 *external Web/Application Server* is involved in the process.
 
@@ -16,7 +16,7 @@ implementation, which supplies user validation and authorization logics.
 
 ## Details
 
-This *Authentication and Authorization Demo* illustrates the typical best
+The *Authentication and Authorization Demo* illustrates the typical best
 practice used for MQTT.Cool Web applications, when a Web/Application server
 is involved in the process. The actual authentication is usually handled by the
 legacy Web/Application server, irrespective of MQTT.Cool.
