@@ -9,7 +9,10 @@ implementation, which supplies user validation and authorization logics.
 
 ## Live Demo
 
-[![Live Demo](screen-large.png)](https://demos.mqtt.cool/auth-hook/index.html)
+[![Live Demo](screen-large.gif)](https://demos.mqtt.cool/auth-hook)
+
+### [![](http://demos.mqtt.cool/resources/play.png) View live demo](https://demos.mqtt.cool/auth-hook)
+
 
 ## Details
 
