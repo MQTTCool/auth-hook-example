@@ -232,7 +232,7 @@ you need to target a different server, search in `src/web/js/app/Main.js`
 this line:
 
 ```js
-SERVER_ADDRESS: 'http://localhost:8080',
+MQTT_COOL_URL: 'http://localhost:8080',
 ```
 
 and change it accordingly.
