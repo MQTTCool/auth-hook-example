@@ -146,6 +146,12 @@ This demo uses a simple Node.js application to feed the MQTT broker with
 random messages (at fixed interval of 500 ms), which can be displayed on the
 subscription panel once the related subscription is made.
 
+### Overall Architecture
+
+Here the overall architecture of the demo:
+
+![](auth-hook-demo-architecture.png)
+
 ## Install
 
 If you want to install a version of this demo pointing to your local MQTT.Cool,
