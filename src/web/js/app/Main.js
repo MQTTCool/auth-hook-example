@@ -121,7 +121,7 @@ $(function() {
               showApplication();
 
               // Create a new client instance.
-              mqttClient = mqttCoolSession.createClient('mqttcool_broker');
+              mqttClient = mqttCoolSession.createClient('mosquitto');
 
               // Start managing MQTT connection.
               manageMQTTConnection();
