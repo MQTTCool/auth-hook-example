@@ -279,5 +279,5 @@ where `url_broker` is the url of the MQTT broker relative to the alias in use.
 
 * Compatible with MQTT.Cool SDK for Web Clients version 1.0.0 or newer.
 * Compatible with MQTT.Cool SDK for Java Hooks version 1.0.0 or newer.
-* Compatible with MQTT.Cool since version 1.1.0 or newer.
+* Compatible with MQTT.Cool since version 1.x.x.
 
