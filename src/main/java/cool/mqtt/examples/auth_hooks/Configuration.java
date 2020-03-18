@@ -1,6 +1,6 @@
 /*
  * MQTT.Cool - https://mqtt.cool
- * 
+ *
  * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
@@ -63,7 +63,7 @@ public class Configuration {
       throws ParserConfigurationException, SAXException, IOException {
 
     DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-    Path path = Paths.get(configDir.getPath(), "mqtt_master_connector_conf.xml");
+    Path path = Paths.get(configDir.getPath(), "../conf/brokers_configuration.xml");
     Document configurationFile = builder.parse(path.toFile());
     return configurationFile;
   }
