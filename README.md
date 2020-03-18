@@ -187,7 +187,7 @@ information on how to configure broker connection parameters):
     `cool.mqtt.examples.auth_hooks.AuthHook` and
     `cool.mqtt.examples.auth_hooks.AuthHookWithAuthCache`, edit the
     `brokers_configuration.xml` file by adding the class name of the Hook
-    you are going to use, in the `<hook_class">` tag, just before
+    you are going to use, in the `<hook_class>` tag, just before
     `<configuration>`:
 
     -  for the direct version:
