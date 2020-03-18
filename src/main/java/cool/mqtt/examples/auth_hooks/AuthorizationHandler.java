@@ -1,6 +1,6 @@
 /*
  * MQTT.Cool - https://mqtt.cool
- * 
+ *
  * Authentication and Authorization Demo
  *
  * Copyright (c) Lightstreamer Srl
