@@ -166,8 +166,8 @@ broker (an up-to-date list is maintained at
 package. MQTT.Cool comes with a set of predefined configurations for
 connecting with local MQTT server instances, as well as with the most common
 publicly accessible brokers. If you want to provide a new custom configuration,
-open the `mqtt_master_connector_conf.xml` file located under
-`<MQTT.COOL_HOME>/mqtt_connectors` and provide a set of entries similar to the
+open the `brokers_configuration.xml` file located under
+`<MQTT.COOL_HOME>/conf` and provide a set of entries similar to the
 following (please refer to the inline documentation for more in-depth
 information on how to configure broker connection parameters):
 
@@ -181,22 +181,22 @@ information on how to configure broker connection parameters):
   ...
   ```
   - Get the `deploy.zip` file from the releases of this project, unzip it and
-    copy the `demo-auth-hooks-1.1.0.jar` from `lib` into
-    `<MQTT.COOL_HOME>/mqtt_connector/lib`.
+    copy the `demo-auth-hooks-1.2.0.jar` from `lib` into
+    `<MQTT.COOL_HOME>/hook/lib`.
   - As the project contains two different Hook implementations,
     `cool.mqtt.examples.auth_hooks.AuthHook` and
     `cool.mqtt.examples.auth_hooks.AuthHookWithAuthCache`, edit the
-    `mqtt_master_connector_conf.xml` file adding the class name of the Hook you
-     are going to use, in the `<param name="hook">` tag, just before
-    `<master_connector>`:
+    `brokers_configuration.xml` file by adding the class name of the Hook
+    you are going to use, in the `<hook_class">` tag, just before
+    `<configuration>`:
 
     -  for the direct version:
        ```xml
-       <param name="hook">cool.mqtt.examples.auth_hooks.AuthHook</param>
+       <hook_class>cool.mqtt.examples.auth_hooks.AuthHook</hook_class>
        ```
     -  for the cached version:
        ```xml
-       <param name="hook">cool.mqtt.examples.auth_hooks.AuthHookWithAuthCache</param>
+       <hook_class>cool.mqtt.examples.auth_hooks.AuthHookWithAuthCache</hook_class>
        ```
 * Launch the MQTT.Cool server.
 * Download this project.
@@ -217,7 +217,7 @@ contents of `src/web` of this project.
 
 ## Build
 
-To build your own version of `demo-auth-hooks-1.1.0.jar`, instead of using the one
+To build your own version of `demo-auth-hooks-1.2.0.jar`, instead of using the one
 provided in the `deploy.zip` file from the [Install](#install) section above,
 follow these steps:
 
@@ -244,7 +244,7 @@ MQTT_COOL_URL: 'http://localhost:8080',
 and change it accordingly.
 
 Further, the demo will look for the **mosquitto** alias, which is one of the
-predefined configurations in `mqtt_master_connector_conf.xml`. Once more, if you
+predefined configurations in `brokers_configuration.xml`. Once more, if you
 need to target a different MQTT broker, and provided that relative connection
 parameters are already defined as shown above, modify the following line in
 `src/web/js/app/Main.js`:
@@ -279,5 +279,5 @@ where `url_broker` is the url of the MQTT broker relative to the alias in use.
 
 * Compatible with MQTT.Cool SDK for Web Clients version 1.0.0 or newer.
 * Compatible with MQTT.Cool SDK for Java Hooks version 1.0.0 or newer.
-* Compatible with MQTT.Cool since version 1.x.x.
+* Compatible with MQTT.Cool since version 2.0.0 or newer.
 
