@@ -181,7 +181,7 @@ information on how to configure broker connection parameters):
   ...
   ```
   - Get the `deploy.zip` file from the releases of this project, unzip it and
-    copy the `demo-auth-hooks-1.2.0.jar` from `lib` into
+    copy the `demo-auth-hooks-2.0.0.jar` from `lib` into
     `<MQTT.COOL_HOME>/hook/lib`.
   - As the project contains two different Hook implementations,
     `cool.mqtt.examples.auth_hooks.AuthHook` and
@@ -217,7 +217,7 @@ contents of `src/web` of this project.
 
 ## Build
 
-To build your own version of `demo-auth-hooks-1.2.0.jar`, instead of using the one
+To build your own version of `demo-auth-hooks-2.0.0.jar`, instead of using the one
 provided in the `deploy.zip` file from the [Install](#install) section above,
 follow these steps:
 
