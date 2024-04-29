@@ -13,6 +13,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Lightstreamer Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/MQTTCool/auth-hook-example</url>
+    </repository>
+  </distributionManagement>
+
   <dependencies>
     <dependency>
       <groupId>cool.mqtt</groupId>
